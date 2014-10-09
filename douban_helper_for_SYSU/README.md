@@ -1,6 +1,5 @@
  
-#广州大学城图书馆豆瓣助手(中山大学版) 
-#Douban library helper for SYSU 
+#广州大学城图书馆豆瓣助手(中山大学版) <br>Douban library helper for SYSU 
 
 
 为豆瓣图书添加广州大学城各高校图书馆藏
