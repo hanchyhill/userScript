@@ -15,11 +15,11 @@ douban_helper_SYSU
 http://book.douban.com/subject/6729209/
 http://read.douban.com/ebook/5503062/
 
-![预览](https://i.minus.com/ibrP3oZ0LrUT.png)
-<img src="https://i.minus.com/ibrP3oZ0LrUT.png" />
-<img src="https://i.minus.com/izOhANdHKI7U3.png" />
-<img src="https://i.minus.com/imQC3IVQ4OWI.png" />
-<img src="https://i.minus.com/ibriQ7Z92iapKf.png" />
+![预览]
+(https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper1.png)
+(https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper2.png)
+(https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper3.png)
+(https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper4.png)
 
 
 <h2>如何安装</h2>
