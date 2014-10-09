@@ -26,18 +26,15 @@ http://read.douban.com/ebook/5503062/
 <li><a href="http://www.apple.com/cn/safari/" class="reference external">Safari</a> + <a href="http://ss-o.net/safari/extension/NinjaKit.safariextz" class="reference external">NinjaKit</a></li>
 <li>……</li>
 </ul>
-
-![豆瓣图书页面](https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper1.png)
-![荐购页面](https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper2.png)
-![十校互借](https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper3.png)
-![电子书页面](https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper4.png)
-
-
-
 <h2>无法进入chrome商店怎么办</h2>
 1.用代理；
 2.修改host，可百度“hoststool”；
 3.下载离线版tampermonkey扩展程序后安装（chrome31以上可能需要修改组策略）<a href="http://www.qixing123.com/webstore/chrome/Tampermonkey/Tampermonkey.crx">tampermonkey七星下载点</a>  <a href="https://clients2.googleusercontent.com/crx/blobs/QgAAAC6zw0qH2DJtnXe8Z7rUJP2izI4Gb1KxyjdhKF5P5kzhCcw2gxzusRnS4tEsDU_bK7Hrlqb5oKOyKy_9g8fIR-87kT-QZKm4JRu8x5avDi8-AMZSmuUkf2ioLgVLAFww8ms_67Rj-gHuGw/extension_3_8_52.crx">chrome商店离线地址</a>  
+![豆瓣图书页面](https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper1.png)
+![荐购页面](https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper2.png)
+![十校互借](https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper3.png)
+
+
 <h2>更新：</h2>
 
 <p>1.6.7 星海音乐学院图书馆终于可以上了，添加星海音乐学院检索。添加双击粘贴馆藏信息剪贴板功能。</p>
