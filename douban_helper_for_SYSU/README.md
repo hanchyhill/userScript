@@ -14,13 +14,6 @@ douban_helper_SYSU
 测试页面：
 http://book.douban.com/subject/6729209/
 http://read.douban.com/ebook/5503062/
-
-![豆瓣图书页面](https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper1.png)
-![荐购页面](https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper2.png)
-![十校互借](https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper3.png)
-![电子书页面](https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper4.png)
-
-
 <h2>如何安装</h2>
 根据自己的浏览器先安装扩展，扩展安装完毕后<a href="https://github.com/hanchyhill/userScript/raw/master/douban_helper_for_SYSU/Douban_helper_for_SYSU.user.js">点击此处</a>即可完成安装
 <ul class="simple">
@@ -32,6 +25,13 @@ http://read.douban.com/ebook/5503062/
 <li><a href="http://www.apple.com/cn/safari/" class="reference external">Safari</a> + <a href="http://ss-o.net/safari/extension/NinjaKit.safariextz" class="reference external">NinjaKit</a></li>
 <li>……</li>
 </ul>
+
+![豆瓣图书页面](https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper1.png)
+![荐购页面](https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper2.png)
+![十校互借](https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper3.png)
+![电子书页面](https://github.com/hanchyhill/userScript/blob/master/douban_helper_for_SYSU/douban_helper4.png)
+
+
 
 <h2>无法进入chrome商店怎么办</h2>
 1.用代理；
