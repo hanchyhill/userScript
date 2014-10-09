@@ -65,11 +65,11 @@ http://read.douban.com/ebook/5503062/
          3.重构脚本完成组件化;
          4.去除博济搜索模块，跟博济说再见。</p>
 <h2>兼容性报告</h2>
-Douban helper for SYSU v1.5.7在以下环境通过兼容性测试：
-firefox 32.0 + GreaseMonkey2.0
-firefox Nightly 35.0a1 + GreaseMonkey2.2
-Chrome 34 +Tampermonkey3.8.52
-Opera 12.16 + Violentmonkey1.6.3
-Maxthon4.4 + 暴力猴2
+Douban helper for SYSU v1.5.7在以下环境通过兼容性测试：  
+firefox 32.0 + GreaseMonkey2.0  
+firefox Nightly 35.0a1 + GreaseMonkey2.2  
+Chrome 34 +Tampermonkey3.8.52  
+Opera 12.16 + Violentmonkey1.6.3  
+Maxthon4.4 + 暴力猴2  
 
 <h2>欢迎反馈BUG</h2>
