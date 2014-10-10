@@ -1,44 +1,44 @@
-¶àËÑË÷ÒýÇæÌø×ª£¬Ô´½Å±¾À´×ÔNLF,»ùÓÚºÚÃ¨µÄÐÞ¸Ä°æ¡£
-ÖÐÉ½´óÑ§×¨ÓÃ Ìí¼Ó ÆÚ¿¯ºÍÍ¼ÊéËÑË÷ÁÐ±í£¬¡¾cnki·­ÒëÖúÊÖ¡¿¡¢¡¾³¬ÐÇÑ§ÊõÊÓÆµ¡¿µÈ¡£
+å¤šæœç´¢å¼•æ“Žè·³è½¬ï¼Œæºè„šæœ¬æ¥è‡ªNLF,åŸºäºŽé»‘çŒ«çš„ä¿®æ”¹ç‰ˆã€‚
+ä¸­å±±å¤§å­¦ä¸“ç”¨ æ·»åŠ  æœŸåˆŠå’Œå›¾ä¹¦æœç´¢åˆ—è¡¨ï¼Œã€cnkiç¿»è¯‘åŠ©æ‰‹ã€‘ã€ã€è¶…æ˜Ÿå­¦æœ¯è§†é¢‘ã€‘ç­‰ã€‚
 
-??ÆÚ¿¯ ¡¾cnki¡¿ ¡¾ ¶ÁÐãÖÐÎÄ¡¿  ¡¾°ÙÁ´ÍâÎÄ¡¿  ¡¾ebscohost¡¿  ¡¾calisÍâÎÄ¡¿  ¡¾Íò·½Êý¾Ý¡¿  ¡¾springer¡¿  ¡¾Î¬»ù(zh)¡¿  ¡¾Î¬»ù(en)¡¿  ¡¾¹È¸èÑ§Êõ¡¿
-??Í¼Êé ¡¾¶¹°ê¶ÁÊé¡¿¡¾ÖÐ´óÍ¼Êé¹Ý¡¿¡¾»ªÄÏÀí¹¤¡¿¡¾¹ãÍâÍ¼Êé¡¿¡¾»ªÊ¦Í¼Êé¡¿¡¾³¬ÐÇÍ¼Êé¡¿
-??ÖªÊ¶  ¡¾Î¬»ù(zh)¡¿¡¾Î¬»ù(en)¡¿¡¾°Ù¶È°Ù¿Æ¡¿¡¾°Ù¶ÈÎÄ¿â¡¿¡¾Öªºõ¡¿¡¾»¥¶¯°Ù¿Æ¡¿¡¾krugle¡¿¡¾ÃÈÄï°Ù¿Æ¡¿
-??·­Òë ¡¾º£´Ê¡¿¡¾°®´Ê°Ô¡¾´ó¶ú¶ä¡¿¡¾¹È¸è·­Òë¡¿¡¾»¦½­ÈÕÓï¡¿¡¾»¦½­Ó¢Óï¡¿¡¾ÓÐµÀ´Êµä¡¿¡¾cnki·­ÒëÖúÊÖ¡¿¡¾±ØÓ¦´Êµä¡¿
+ðŸŽ“æœŸåˆŠ ã€cnkiã€‘ ã€ è¯»ç§€ä¸­æ–‡ã€‘  ã€ç™¾é“¾å¤–æ–‡ã€‘  ã€ebscohostã€‘  ã€caliså¤–æ–‡ã€‘  ã€ä¸‡æ–¹æ•°æ®ã€‘  ã€springerã€‘  ã€ç»´åŸº(zh)ã€‘  ã€ç»´åŸº(en)ã€‘  ã€è°·æ­Œå­¦æœ¯ã€‘
+ðŸ“•å›¾ä¹¦ ã€è±†ç“£è¯»ä¹¦ã€‘ã€ä¸­å¤§å›¾ä¹¦é¦†ã€‘ã€åŽå—ç†å·¥ã€‘ã€å¹¿å¤–å›¾ä¹¦ã€‘ã€åŽå¸ˆå›¾ä¹¦ã€‘ã€è¶…æ˜Ÿå›¾ä¹¦ã€‘
+ðŸ…°çŸ¥è¯†  ã€ç»´åŸº(zh)ã€‘ã€ç»´åŸº(en)ã€‘ã€ç™¾åº¦ç™¾ç§‘ã€‘ã€ç™¾åº¦æ–‡åº“ã€‘ã€çŸ¥ä¹Žã€‘ã€äº’åŠ¨ç™¾ç§‘ã€‘ã€krugleã€‘ã€èŒå¨˜ç™¾ç§‘ã€‘
+ðŸ”ƒç¿»è¯‘ ã€æµ·è¯ã€‘ã€çˆ±è¯éœ¸ã€å¤§è€³æœµã€‘ã€è°·æ­Œç¿»è¯‘ã€‘ã€æ²ªæ±Ÿæ—¥è¯­ã€‘ã€æ²ªæ±Ÿè‹±è¯­ã€‘ã€æœ‰é“è¯å…¸ã€‘ã€cnkiç¿»è¯‘åŠ©æ‰‹ã€‘ã€å¿…åº”è¯å…¸ã€‘
 
-??ÍøÒ³  ¡¾DuckDuckGo¡¿¡¾¹È¸è¾µÏñ¡¿¡¾±ØÓ¦¡¿¡¾°Ù¶È¡¿¡¾ÓÐµÀ¡¿¡¾ËÑ¹·¡¿¡¾360¡¿¡¾SimilarSite¡¿¡¾Google¡¿
-??Í¼Æ¬ ¡¾¹È¸è¡¿¡¾picsearch¡¿¡¾flickr¡¿¡¾deviantart¡¿¡¾findicons¡¿¡¾easyicon¡¿¡¾iconpng¡¿¡¾°Ù¶È¡¿¡¾ËÑ¹·¡¿¡¾±ØÓ¦¡¿¡¾ÓÐµÀ¡¿
-?ÒôÀÖ ¡¾ÏºÃ×¡¿¡¾ÍøÒ×ÔÆÒôÀÖ¡¿¡¾Songtaste¡¿¡¾°Ù¶È¡¿¡¾Ò»Ìý¡¿¡¾¿áÎÒ¡¿¡¾ËÑ¹·¡¿
-??ÊÓÆµ ¡¾AÕ¾¡¿¡¾BÕ¾¡¿¡¾ÓÅ¿á¡¿¡¾ÍÁ¶¹¡¿¡¾³¬ÐÇÑ§ÊõÊÓÆµ¡¿¡¾ÍøÒ×¹«¿ª¿Î¡¿¡¾56¡¿¡¾¿á6¡¿¡¾youtube¡¿¡¾nicovideo¡¿¡¾°®ÆæÒÕ¡¿¡¾ÀÖÊÓ¡¿¡¾ËÑºü¡¿¡¾pps¡¿
+ðŸŒç½‘é¡µ  ã€DuckDuckGoã€‘ã€è°·æ­Œé•œåƒã€‘ã€å¿…åº”ã€‘ã€ç™¾åº¦ã€‘ã€æœ‰é“ã€‘ã€æœç‹—ã€‘ã€360ã€‘ã€SimilarSiteã€‘ã€Googleã€‘
+ðŸ“·å›¾ç‰‡ ã€è°·æ­Œã€‘ã€picsearchã€‘ã€flickrã€‘ã€deviantartã€‘ã€findiconsã€‘ã€easyiconã€‘ã€iconpngã€‘ã€ç™¾åº¦ã€‘ã€æœç‹—ã€‘ã€å¿…åº”ã€‘ã€æœ‰é“ã€‘
+â™«éŸ³ä¹ ã€è™¾ç±³ã€‘ã€ç½‘æ˜“äº‘éŸ³ä¹ã€‘ã€Songtasteã€‘ã€ç™¾åº¦ã€‘ã€ä¸€å¬ã€‘ã€é…·æˆ‘ã€‘ã€æœç‹—ã€‘
+ðŸ“¹è§†é¢‘ ã€Aç«™ã€‘ã€Bç«™ã€‘ã€ä¼˜é…·ã€‘ã€åœŸè±†ã€‘ã€è¶…æ˜Ÿå­¦æœ¯è§†é¢‘ã€‘ã€ç½‘æ˜“å…¬å¼€è¯¾ã€‘ã€56ã€‘ã€é…·6ã€‘ã€youtubeã€‘ã€nicovideoã€‘ã€çˆ±å¥‡è‰ºã€‘ã€ä¹è§†ã€‘ã€æœç‹ã€‘ã€ppsã€‘
 
-?ÏÂÔØ  ¡¾¼«Ó°¶¯Âþ¡¾¶¯Âþ»¨Ô°¡¾VeryCD¡¿¡¾ÈËÈËÓ°ÊÓ¡¿¡¾ÉäÊÖ×ÖÄ»¡¿¡¾iask¡¿¡¾idown¡¿¡¾ÅÌËÑ¡¿¡¾ÎÒÀÖÅÌ¡¿¡¾ÕÒÎÄ¼þ¡¿¡¾Download¡¿¡¾µçÂ¿×ÊÔ´¡¿¡¾ED2000¡¿
-??Èí¼þ  ¡¾ÏÂÔØ°É¡¿¡¾ÂÌÈíÁªÃË¡¿¡¾ÂÌÈí¼ÒÔ°¡¿¡¾´´eÏÂÔØÔ°¡¿¡¾Î÷Î÷Èí¼þÔ°¡¿¡¾ÂÌ²èÈí¼þÔ°¡¿¡¾Î´À´Èí¼þÔ°¡¿¡¾pc6ÏÂÔØÕ¾¡¿¡¾»ª²ÊÈí¼þ¡¿
-??geek   ¡¾MDN¡¾¸½¼þ×é¼þ¡¿¡¾»ðºüÉçÇø¡¿¡¾userscripts¾µÏñ¡¿¡¾userstyles¡¿¡¾greasyfork¡¿¡¾»ðºüÌù°É¡¿¡¾¿¨·¹¡¿¡¾github¡¿¡¾mozillaZine¡¿
-??Èí¼þ  ¡¾ÏÂÔØ°É¡¿¡¾ÂÌÈíÁªÃË¡¿¡¾ÂÌÈí¼ÒÔ°¡¿¡¾´´eÏÂÔØ¡¿¡¾Ô°Î÷Î÷Èí¼þÔ°¡¿¡¾ÂÌ²èÈí¼þÔ°¡¿¡¾Î´À´Èí¼þÔ°¡¿¡¾pc6ÏÂÔØÕ¾¡¿
-??¹ºÎï   ¡¾ÌÔ±¦¡¿¡¾ÌìÃ¨¡¿¡¾¾©¶«¡¿¡¾Ò»ºÅµê¡¿¡¾ÑÇÂíÑ·¡¿¡¾µ±µ±¡¿
-??ACG  ¡¾pixiv¡¿¡¾Safebooru¡¿¡¾Gelbooru¡¿¡¾nico¾²»­¡¿¡¾Danbooru¡¿¡¾sankaku¡¿¡¾yande¡¿¡¾konachan¡¿¡¾Zerochan¡¿¡¾anime-pictures¡¿¡¾anime-girls¡¿
+â¬ä¸‹è½½  ã€æžå½±åŠ¨æ¼«ã€åŠ¨æ¼«èŠ±å›­ã€VeryCDã€‘ã€äººäººå½±è§†ã€‘ã€å°„æ‰‹å­—å¹•ã€‘ã€iaskã€‘ã€idownã€‘ã€ç›˜æœã€‘ã€æˆ‘ä¹ç›˜ã€‘ã€æ‰¾æ–‡ä»¶ã€‘ã€Downloadã€‘ã€ç”µé©´èµ„æºã€‘ã€ED2000ã€‘
+ðŸ’»è½¯ä»¶  ã€ä¸‹è½½å§ã€‘ã€ç»¿è½¯è”ç›Ÿã€‘ã€ç»¿è½¯å®¶å›­ã€‘ã€åˆ›eä¸‹è½½å›­ã€‘ã€è¥¿è¥¿è½¯ä»¶å›­ã€‘ã€ç»¿èŒ¶è½¯ä»¶å›­ã€‘ã€æœªæ¥è½¯ä»¶å›­ã€‘ã€pc6ä¸‹è½½ç«™ã€‘ã€åŽå½©è½¯ä»¶ã€‘
+ðŸ‚geek   ã€MDNã€é™„ä»¶ç»„ä»¶ã€‘ã€ç«ç‹ç¤¾åŒºã€‘ã€userscriptsé•œåƒã€‘ã€userstylesã€‘ã€greasyforkã€‘ã€ç«ç‹è´´å§ã€‘ã€å¡é¥­ã€‘ã€githubã€‘ã€mozillaZineã€‘
+ðŸ’»è½¯ä»¶  ã€ä¸‹è½½å§ã€‘ã€ç»¿è½¯è”ç›Ÿã€‘ã€ç»¿è½¯å®¶å›­ã€‘ã€åˆ›eä¸‹è½½ã€‘ã€å›­è¥¿è¥¿è½¯ä»¶å›­ã€‘ã€ç»¿èŒ¶è½¯ä»¶å›­ã€‘ã€æœªæ¥è½¯ä»¶å›­ã€‘ã€pc6ä¸‹è½½ç«™ã€‘
+ðŸ¬è´­ç‰©   ã€æ·˜å®ã€‘ã€å¤©çŒ«ã€‘ã€äº¬ä¸œã€‘ã€ä¸€å·åº—ã€‘ã€äºšé©¬é€Šã€‘ã€å½“å½“ã€‘
+ðŸ˜†ACG  ã€pixivã€‘ã€Safebooruã€‘ã€Gelbooruã€‘ã€nicoé™ç”»ã€‘ã€Danbooruã€‘ã€sankakuã€‘ã€yandeã€‘ã€konachanã€‘ã€Zerochanã€‘ã€anime-picturesã€‘ã€anime-girlsã€‘
 <img src="https://i.minus.com/i0NmeQiwQEK9T.jpg" height="60%" width="60%">
 <img src="https://i.minus.com/iblNkW5p6ik2xW.jpg" height="60%" width="60%">
 <img src="https://i.minus.com/ibrY10lKYo97uu.png" height="60%" width="60%">
-<h2>ÈçºÎ°²×°</h2>
-¸ù¾Ý×Ô¼ºµÄä¯ÀÀÆ÷ÏÈ°²×°À©Õ¹£¬À©Õ¹°²×°Íê±Ïºóµã»÷±¾Ò³Ãæ¡¾°²×°½Å±¾¡¿°´Å¥¼´¿ÉÍê³É°²×°
+<h2>å¦‚ä½•å®‰è£…</h2>
+æ ¹æ®è‡ªå·±çš„æµè§ˆå™¨å…ˆå®‰è£…æ‰©å±•ï¼Œæ‰©å±•å®‰è£…å®Œæ¯•åŽç‚¹å‡»æœ¬é¡µé¢ã€å®‰è£…è„šæœ¬ã€‘æŒ‰é’®å³å¯å®Œæˆå®‰è£…
 <ul class="simple">
 <li><a href="http://www.firefox.com/" class="reference external">Firefox</a> + <a href="https://addons.mozilla.org/firefox/addon/greasemonkey/" class="reference external">Greasemonkey</a></li>
 <li><a href="http://www.opera.com/" class="reference external">Opera</a> + <a href="https://addons.opera.com/extensions/details/violent-monkey/" class="reference external">Violentmonkey</a></li>
-<li><a href="http://www.google.com/chrome" class="reference external">Chrome</a> + <a href="http://tampermonkey.net" class="reference external">Tampermonkey</a>£¨¸÷ÖÖ»ùÓÚchromium¿ª·¢µÄä¯ÀÀÆ÷Èç360¼«ËÙ¡¢ÁÔ±ªÖ®ÀàµÄ°²×°Õâ¸ö£©</li>
+<li><a href="http://www.google.com/chrome" class="reference external">Chrome</a> + <a href="http://tampermonkey.net" class="reference external">Tampermonkey</a>ï¼ˆå„ç§åŸºäºŽchromiumå¼€å‘çš„æµè§ˆå™¨å¦‚360æžé€Ÿã€çŒŽè±¹ä¹‹ç±»çš„å®‰è£…è¿™ä¸ªï¼‰</li>
 <li><a href="http://www.maxthon.cn/" class="reference external">Maxthon</a> + <a href="http://extension.maxthon.cn/detail/index.php?view_id=1680" class="reference external">Violentmonkey</a></li>
 <li><a href="http://www.apple.com/cn/safari/" class="reference external">Safari</a> + <a href="http://ss-o.net/safari/extension/NinjaKit.safariextz" class="reference external">NinjaKit</a></li>
-<li>¡­¡­</li>
+<li>â€¦â€¦</li>
 </ul>
-<h2>¸üÐÂ</h2>
-v3.0.1.7.2  2014-09-13 ÐÞ¸ÄCSS,Ìí¼ÓcalisÍâÎÄÒ³ÃæµÄ²åÈë
-v3.0.1.7.1  2014-09-13 ÐÞ¸´AVGÁÐ±íµÄËÑË÷ÒýÇæ¡£ÏÔÊ¾·½Ê½Í³Ò»¸Ä³ÉÁ½ÐÐÏÔÊ¾£¬µÚÒ»ÐÐÏÔÊ¾Õ¹¿ªÁÐ±í£¬µÚ¶þÐÐÏÔÊ¾ÆäÓàÁÐ±í
-v3.0.1.6.5  2014-09-12 ÐÞ¸´ÖªÊ¶ÁÐ±íÎÞ·¨Õ¹¿ªÎÊÌâ¡£
-v3.0.1.6.4  2014-09-12 »»ÁËunicode emoji·ûºÅ£¬Ìí¼ÓÍøÒ×ÒôÀÖ£¬ÐÞ¸´¸÷ÖÖbug¡£
-v3.0.1.6.3  2014-09-12 ÐÞ¸´ÊÓÆµ¡¢ÒôÀÖËÑË÷listÖÐµÄËÑË÷ÒýÇæ£¬È¥³ý¿á¹·£¬Ìí¼Ó¹ºÎïlist¡£
-v3.0.1.6.2  2014-09-12 ÐÞ¸´Í¼Æ¬ËÑË÷listÖÐµÄËÑË÷ÒýÇæ£¬È¥³ýjpg4£¬ÐÞ¸´springer¡£
-v3.0.1.6.1  2014-09-12 ÐÞ¸´ÍøÒ³ËÑË÷listÖÐµÄËÑË÷ÒýÇæ£¬È¥³ýÑÅ»¢£¬Ìí¼Ó¡¾Í¼Êé¡¿ÁÐ±í£¬ÐÞ¸Ä¡¾Ñ§Êõ/ÆÚ¿¯¡¿ÁÐ±íÏÂµÄËÑË÷£¬ÐÞ¸´³¬ÐÇÍ¼ÊéËÑË÷¡£
+<h2>æ›´æ–°</h2>
+* v3.0.1.7.2  2014-09-13 ä¿®æ”¹CSS,æ·»åŠ caliså¤–æ–‡é¡µé¢çš„æ’å…¥  
+* v3.0.1.7.1  2014-09-13 ä¿®å¤AVGåˆ—è¡¨çš„æœç´¢å¼•æ“Žã€‚æ˜¾ç¤ºæ–¹å¼ç»Ÿä¸€æ”¹æˆä¸¤è¡Œæ˜¾ç¤ºï¼Œç¬¬ä¸€è¡Œæ˜¾ç¤ºå±•å¼€åˆ—è¡¨ï¼Œç¬¬äºŒè¡Œæ˜¾ç¤ºå…¶ä½™åˆ—è¡¨  
+* v3.0.1.6.5  2014-09-12 ä¿®å¤çŸ¥è¯†åˆ—è¡¨æ— æ³•å±•å¼€é—®é¢˜ã€‚  
+* v3.0.1.6.4  2014-09-12 æ¢äº†unicode emojiç¬¦å·ï¼Œæ·»åŠ ç½‘æ˜“éŸ³ä¹ï¼Œä¿®å¤å„ç§bugã€‚  
+* v3.0.1.6.3  2014-09-12 ä¿®å¤è§†é¢‘ã€éŸ³ä¹æœç´¢listä¸­çš„æœç´¢å¼•æ“Žï¼ŒåŽ»é™¤é…·ç‹—ï¼Œæ·»åŠ è´­ç‰©listã€‚  
+* v3.0.1.6.2  2014-09-12 ä¿®å¤å›¾ç‰‡æœç´¢listä¸­çš„æœç´¢å¼•æ“Žï¼ŒåŽ»é™¤jpg4ï¼Œä¿®å¤springerã€‚  
+* v3.0.1.6.1  2014-09-12 ä¿®å¤ç½‘é¡µæœç´¢listä¸­çš„æœç´¢å¼•æ“Žï¼ŒåŽ»é™¤é›…è™Žï¼Œæ·»åŠ ã€å›¾ä¹¦ã€‘åˆ—è¡¨ï¼Œä¿®æ”¹ã€å­¦æœ¯/æœŸåˆŠã€‘åˆ—è¡¨ä¸‹çš„æœç´¢ï¼Œä¿®å¤è¶…æ˜Ÿå›¾ä¹¦æœç´¢ã€‚
 
 
-<h2>»¶Ó­Ìá½»BUG</h2>
-ÔÚ±¾Ò³Ãæ·´À¡£¬»òÕßµ½´Ë´¦Ìû×Ó<a href="http://tieba.baidu.com/p/3291310904">http://tieba.baidu.com/p/3291310904</a>
+<h2>æ¬¢è¿Žæäº¤BUG</h2>
+åœ¨æœ¬é¡µé¢åé¦ˆï¼Œæˆ–è€…åˆ°æ­¤å¤„å¸–å­<a href="http://tieba.baidu.com/p/3291310904">http://tieba.baidu.com/p/3291310904</a>
