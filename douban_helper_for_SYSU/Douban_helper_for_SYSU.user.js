@@ -1,7 +1,8 @@
-// ==UserScript==
-// @name:zh     广州大学城图书馆豆瓣助手(中山大学版)
-// @name        Douban library helper for SYSU
+// ==UserScript==  
+// @name       广州大学城图书馆豆瓣助手(中山大学版)
 // @description 为豆瓣图书增加广州大学城图书馆藏
+// @name:en        Douban library helper for SYSU
+// @description:en add library collections in Guangzhou Daxuecheng on douban website
 // @author      Hanchy Hill
 // @namespace   https://minhill.com
 // @include     http://book.douban.com/subject/*
@@ -20,7 +21,7 @@
 // @include     http://121.33.246.167/opac/bookinfo.aspx?ctrlno=*
 // @include     http://218.192.148.33:81/bookinfo.aspx?ctrlno=*
 // @require     http://libs.baidu.com/jquery/2.0.0/jquery.min.js
-// @version     1.6.7
+// @version     1.6.8
 // @license     MIT
 // @grant GM_getValue
 // @grant GM_setValue
@@ -2679,12 +2680,50 @@ ISBNInsert=function(msg,frameLocation){
     frame.appendChild(innerContent);
     function addStoreListener(){
         GM_setClipboard(this.getAttribute("data-storeInfo"));
+
+        noteInfo = "已复制到粘贴板 "+this.getAttribute("data-storeInfo");
+
+  // Let's check if the browser supports notifications
+    if (!("Notification" in window)) {
         confirm("以下信息已复制到粘贴板\n\n"+this.getAttribute("data-storeInfo"));
     }
+
+  // Let's check if the user is okay to get some notification
+    else if (Notification.permission === "granted") {
+    // If it's okay let's create a notification
+        var notification = new Notification(noteInfo);
+    }
+
+  // Otherwise, we need to ask the user for permission
+  // Note, Chrome does not implement the permission static property
+  // So we have to check for NOT 'denied' instead of 'default'
+  else if (Notification.permission !== 'denied') {
+    Notification.requestPermission(function (permission) {
+      // Whatever the user answers, we make sure we store the information
+      if (!('permission' in Notification)) {
+        Notification.permission = permission;
+      }
+
+      // If the user is okay, let's create a notification
+      if (permission === "granted") {
+        var notification = new Notification(noteInfo);
+      }
+      else{
+        confirm("以下信息已复制到粘贴板\n\n"+this.getAttribute("data-storeInfo"));
+      }
+    });
+  }
+  // At last, if the user already denied any notification
+  else{
+    confirm("以下信息已复制到粘贴板\n\n"+this.getAttribute("data-storeInfo"));
+  }
+
+}
     var storeListener = document.querySelectorAll(".preStoreRegister");
     for(s=0;s<storeListener.length;s++){
         storeListener[s].addEventListener("dblclick",addStoreListener,false);
-        storeListener[s].classList.remove("preStoreRegister");
+            storeListener[s].classList.remove("preStoreRegister");        
+        
     }
 }
 ///////////////Title插入框架//////////////////////////////
