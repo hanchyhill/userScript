@@ -17,9 +17,9 @@
 💻软件  【下载吧】【绿软联盟】【绿软家园】【创e下载】【园西西软件园】【绿茶软件园】【未来软件园】【pc6下载站】  
 🏬购物   【淘宝】【天猫】【京东】【一号店】【亚马逊】【当当】  
 😆ACG  【pixiv】【Safebooru】【Gelbooru】【nico静画】【Danbooru】【sankaku】【yande】【konachan】【Zerochan】【anime-pictures】【anime-girls】  
-[截图1](https://raw.githubusercontent.com/hanchyhill/userScript/master/search_engine_jump_for_SYSU/search_engine_jump1.jpg)
-[截图2](https://raw.githubusercontent.com/hanchyhill/userScript/master/search_engine_jump_for_SYSU/search_engine_jump2.jpg)
-[截图3](https://raw.githubusercontent.com/hanchyhill/userScript/master/search_engine_jump_for_SYSU/search_engine_jump3.png)
+[截图1](https://github.com/hanchyhill/userScript/blob/master/search_engine_jump_for_SYSU/search_engine_jump1.jpg)
+[截图2](https://github.com/hanchyhill/userScript/blob/master/search_engine_jump_for_SYSU/search_engine_jump2.jpg)
+[截图3](https://github.com/hanchyhill/userScript/blob/master/search_engine_jump_for_SYSU/search_engine_jump3.png)
 <h2>如何安装</h2>
 根据自己的浏览器先安装扩展，扩展安装完毕后点击本页面【安装脚本】按钮即可完成安装
 <ul class="simple">
