@@ -7,7 +7,7 @@
 🔃翻译 【海词】【爱词霸【大耳朵】【谷歌翻译】【沪江日语】【沪江英语】【有道词典】【cnki翻译助手】【必应词典】  
 
 🌏网页  【DuckDuckGo】【谷歌镜像】【必应】【百度】【有道】【搜狗】【360】【SimilarSite】【Google】  
-📷图片 【谷歌】【picsearch】【flickr】【deviantart】【findicons】【easyicon】【iconpng】【百度】【搜狗】【必应】【有道】
+📷图片 【谷歌】【picsearch】【flickr】【deviantart】【findicons】【easyicon】【iconpng】【百度】【搜狗】【必应】【有道】  
 ♫音乐 【虾米】【网易云音乐】【Songtaste】【百度】【一听】【酷我】【搜狗】  
 📹视频 【A站】【B站】【优酷】【土豆】【超星学术视频】【网易公开课】【56】【酷6】【youtube】【nicovideo】【爱奇艺】【乐视】【搜狐】【pps】  
 
