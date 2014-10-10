@@ -2699,7 +2699,7 @@ titleInsert=function(msg,frameLocation){
             frame = document.getElementById("libISBN");
             break;
         case "title":
-            GM_addStyle("#libTitle { max-height: 350px;overflow: auto; }");
+            GM_addStyle("#libTitle { max-height: 300px;overflow: auto; }");
             loading =document.getElementById("titleLoading");
             loading.parentNode.removeChild(loading);
             frame = document.getElementById("libTitle");
@@ -2843,7 +2843,7 @@ messageCatcher=function(msg,frameLocation){
             if(msg.items[s].location) storeInfo+="馆藏地:"+msg.items[s].location;
             //alert(storeInfo);       
            bookStatus =   '<ul class="preStoreRegister storelist ft pl more-after'+attachRent+'" data-storeInfo="'+storeInfo+'" '+'title="双击可粘贴馆藏信息到剪贴板"'+'> ' +//+'ondblclick="GM_setClipboard(this.getAttribute('+"'data-storeInfo'"+'))"'
-                          '<li style="border: none"><a href="'+msg.items[s].link+'" target="_blank">'+otherAbbr+'单册状态:' + msg.items[s].storeState+
+                          '<li style="border: none"><a href="'+msg.items[s].link+'" target="_blank">'+otherAbbr+'状态:' + msg.items[s].storeState+
                           '<span style="position:relative; ">  应还日期: ' + msg.items[s].returnTime +'</span></a></li>' + 
                           //'<li style="border: none">到期: ' + loan[s][3] + '</li>' +
                           '<li style="border: none">分馆: ' + msg.items[s].branch + '</li>' +
@@ -2951,7 +2951,7 @@ GM_registerMenuCommand("图书馆检索设置", popSetting);
 if(location.href.indexOf('douban')!=-1){
 
   GM_addStyle(".tablist {position:relative;}"+
-".tab_content {position: relative;width:295px;margin-bottom:5px;max-height: 350px;overflow: auto;padding:15px 5px 15px 5px;border:1px solid #91a7b4;border-radius:3px;box-shadow:0 2px 3px rgba(0,0,0,0.1);font-size:1.2em;line-height:1.5em;color:#666;background:#F6F6F1;}"+
+".tab_content {position: relative;width:295px;margin-bottom:5px;max-height: 300px;overflow: auto;padding:15px 5px 15px 5px;border:1px solid #91a7b4;border-radius:3px;box-shadow:0 2px 3px rgba(0,0,0,0.1);font-size:1.2em;line-height:1.5em;color:#666;background:#F6F6F1;}"+
 ".tabmenu {position:absolute;bottom:100%;margin:0;width:316px;}"+
   ".tabmenu li{display:inline-block;}"+
   ".tabmenu li a {display:block;padding:5px 10px;margin:0 10px 0 0;border:1px solid #91a7b4;border-radius:5px 5px 0 0;background:#F6F6F1;color:#333;text-decoration:none;}#libISBN div ul,#libTitle div ul,#otherISBN div ul,#otherTitle div ul{border-bottom: 1px dashed #ddd;}#errorOtherISBN{font-size:10px}.blue a{background:#37A !important;color:white !important;}.tab_content h2{color:#007722; font:15px/150% Arial,Helvetica,sans-serif;margin: 0 0 12px;}"+
