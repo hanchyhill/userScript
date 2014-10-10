@@ -14,7 +14,6 @@
 ⏬下载  【极影动漫【动漫花园【VeryCD】【人人影视】【射手字幕】【iask】【idown】【盘搜】【我乐盘】【找文件】【Download】【电驴资源】【ED2000】  
 💻软件  【下载吧】【绿软联盟】【绿软家园】【创e下载园】【西西软件园】【绿茶软件园】【未来软件园】【pc6下载站】【华彩软件】  
 🏂geek   【MDN【附件组件】【火狐社区】【userscripts镜像】【userstyles】【greasyfork】【火狐贴吧】【卡饭】【github】【mozillaZine】  
-💻软件  【下载吧】【绿软联盟】【绿软家园】【创e下载】【园西西软件园】【绿茶软件园】【未来软件园】【pc6下载站】  
 🏬购物   【淘宝】【天猫】【京东】【一号店】【亚马逊】【当当】  
 😆ACG  【pixiv】【Safebooru】【Gelbooru】【nico静画】【Danbooru】【sankaku】【yande】【konachan】【Zerochan】【anime-pictures】【anime-girls】  
 ![截图1](https://github.com/hanchyhill/userScript/blob/master/search_engine_jump_for_SYSU/search_engine_jump1.jpg)
