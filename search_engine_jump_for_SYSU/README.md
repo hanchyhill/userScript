@@ -1,25 +1,25 @@
 多搜索引擎跳转，源脚本来自NLF,基于黑猫的修改版。
 中山大学专用 添加 期刊和图书搜索列表，【cnki翻译助手】、【超星学术视频】等。
 
-🎓期刊 【cnki】 【 读秀中文】  【百链外文】  【ebscohost】  【calis外文】  【万方数据】  【springer】  【维基(zh)】  【维基(en)】  【谷歌学术】
-📕图书 【豆瓣读书】【中大图书馆】【华南理工】【广外图书】【华师图书】【超星图书】
-🅰知识  【维基(zh)】【维基(en)】【百度百科】【百度文库】【知乎】【互动百科】【krugle】【萌娘百科】
-🔃翻译 【海词】【爱词霸【大耳朵】【谷歌翻译】【沪江日语】【沪江英语】【有道词典】【cnki翻译助手】【必应词典】
+🎓期刊 【cnki】 【 读秀中文】  【百链外文】  【ebscohost】  【calis外文】  【万方数据】  【springer】  【维基(zh)】  【维基(en)】  【谷歌学术】  
+📕图书 【豆瓣读书】【中大图书馆】【华南理工】【广外图书】【华师图书】【超星图书】  
+🅰知识  【维基(zh)】【维基(en)】【百度百科】【百度文库】【知乎】【互动百科】【krugle】【萌娘百科】  
+🔃翻译 【海词】【爱词霸【大耳朵】【谷歌翻译】【沪江日语】【沪江英语】【有道词典】【cnki翻译助手】【必应词典】  
 
-🌏网页  【DuckDuckGo】【谷歌镜像】【必应】【百度】【有道】【搜狗】【360】【SimilarSite】【Google】
+🌏网页  【DuckDuckGo】【谷歌镜像】【必应】【百度】【有道】【搜狗】【360】【SimilarSite】【Google】  
 📷图片 【谷歌】【picsearch】【flickr】【deviantart】【findicons】【easyicon】【iconpng】【百度】【搜狗】【必应】【有道】
-♫音乐 【虾米】【网易云音乐】【Songtaste】【百度】【一听】【酷我】【搜狗】
-📹视频 【A站】【B站】【优酷】【土豆】【超星学术视频】【网易公开课】【56】【酷6】【youtube】【nicovideo】【爱奇艺】【乐视】【搜狐】【pps】
+♫音乐 【虾米】【网易云音乐】【Songtaste】【百度】【一听】【酷我】【搜狗】  
+📹视频 【A站】【B站】【优酷】【土豆】【超星学术视频】【网易公开课】【56】【酷6】【youtube】【nicovideo】【爱奇艺】【乐视】【搜狐】【pps】  
 
-⏬下载  【极影动漫【动漫花园【VeryCD】【人人影视】【射手字幕】【iask】【idown】【盘搜】【我乐盘】【找文件】【Download】【电驴资源】【ED2000】
-💻软件  【下载吧】【绿软联盟】【绿软家园】【创e下载园】【西西软件园】【绿茶软件园】【未来软件园】【pc6下载站】【华彩软件】
-🏂geek   【MDN【附件组件】【火狐社区】【userscripts镜像】【userstyles】【greasyfork】【火狐贴吧】【卡饭】【github】【mozillaZine】
-💻软件  【下载吧】【绿软联盟】【绿软家园】【创e下载】【园西西软件园】【绿茶软件园】【未来软件园】【pc6下载站】
-🏬购物   【淘宝】【天猫】【京东】【一号店】【亚马逊】【当当】
-😆ACG  【pixiv】【Safebooru】【Gelbooru】【nico静画】【Danbooru】【sankaku】【yande】【konachan】【Zerochan】【anime-pictures】【anime-girls】
-<img src="https://i.minus.com/i0NmeQiwQEK9T.jpg" height="60%" width="60%">
-<img src="https://i.minus.com/iblNkW5p6ik2xW.jpg" height="60%" width="60%">
-<img src="https://i.minus.com/ibrY10lKYo97uu.png" height="60%" width="60%">
+⏬下载  【极影动漫【动漫花园【VeryCD】【人人影视】【射手字幕】【iask】【idown】【盘搜】【我乐盘】【找文件】【Download】【电驴资源】【ED2000】  
+💻软件  【下载吧】【绿软联盟】【绿软家园】【创e下载园】【西西软件园】【绿茶软件园】【未来软件园】【pc6下载站】【华彩软件】  
+🏂geek   【MDN【附件组件】【火狐社区】【userscripts镜像】【userstyles】【greasyfork】【火狐贴吧】【卡饭】【github】【mozillaZine】  
+💻软件  【下载吧】【绿软联盟】【绿软家园】【创e下载】【园西西软件园】【绿茶软件园】【未来软件园】【pc6下载站】  
+🏬购物   【淘宝】【天猫】【京东】【一号店】【亚马逊】【当当】  
+😆ACG  【pixiv】【Safebooru】【Gelbooru】【nico静画】【Danbooru】【sankaku】【yande】【konachan】【Zerochan】【anime-pictures】【anime-girls】  
+[截图1](https://raw.githubusercontent.com/hanchyhill/userScript/master/search_engine_jump_for_SYSU/search_engine_jump1.jpg)
+[截图2](https://raw.githubusercontent.com/hanchyhill/userScript/master/search_engine_jump_for_SYSU/search_engine_jump2.jpg)
+[截图3](https://raw.githubusercontent.com/hanchyhill/userScript/master/search_engine_jump_for_SYSU/search_engine_jump3.png)
 <h2>如何安装</h2>
 根据自己的浏览器先安装扩展，扩展安装完毕后点击本页面【安装脚本】按钮即可完成安装
 <ul class="simple">
