@@ -5,6 +5,7 @@
 // @description:en add library collections in Guangzhou Daxuecheng on douban website
 // @author      Hanchy Hill
 // @namespace   https://minhill.com
+// @downloadURL https://greasyfork.org/scripts/2766
 // @include     http://book.douban.com/subject/*
 // @include     http://202.116.64.108:8080/apsm/recommend/recommend_nobor.jsp*
 // @include     http://202.116.64.108:8080/apsm/recommend/recommend.jsp*
@@ -20,8 +21,8 @@
 // @include     http://222.200.98.171:81/bookinfo.aspx?ctrlno=*
 // @include     http://121.33.246.167/opac/bookinfo.aspx?ctrlno=*
 // @include     http://218.192.148.33:81/bookinfo.aspx?ctrlno=*
-// @require     http://libs.baidu.com/jquery/2.0.0/jquery.min.js
-// @version     1.6.8
+// @include     http://opac.gdufs.edu.cn:8118/apsm/recommend/recommend_nobor.jsp*
+// @version     1.7.4
 // @license     MIT
 // @grant GM_getValue
 // @grant GM_setValue
@@ -36,6 +37,11 @@
 
 
 GM_addStyle("#ISBNLoading,#titleLoading { list-style-type:none; }");
+
+GM_addStyle("#libSetting {background: #F6F6F1;border: 1px solid #aaa;box-shadow: 0 0 8px 2px #777;height: auto;left: 320px;min-height: 100px;padding: 0 20px 65px;position: fixed;top: 25%;width: 600px;z-index: 1000002;}"+
+'.setbtn{display: inline-block; background: #33A057; border: 1px solid #2F7B4B; color: white!important; padding: 1px 10px; border-radius: 3px; margin-right: 8px;margin:5px;cursor:pointer;} '+
+'.gotobtn{display: inline-block; background: #33A057!important; border: 1px solid #2F7B4B; color: white!important; padding: 1px 10px; border-radius: 3px;margin-bottom:5px;font-size:0.8em!important;cursor:pointer;} '+
+'#otherTitle .getlink a{display: inline-block; border: 1px solid #2F7B4B; padding: 1px 5px; border-radius: 3px;margin-bottom:2px;font-size:0.8em!important;cursor:pointer;text-decoration:none!important;}');
 
 var schoolList=["SYSU","SCUT","SCNU","GDUT","GDUFS","GZHTCM","GZHU","GZARTS","XHCOM"];
 
@@ -72,6 +78,7 @@ function LibItem(school){
     this.pubDate=null;
     this.school=school;
     this.link=null;
+    this.extra=null;
     this.type="booklist";
 }
 
@@ -149,10 +156,8 @@ bookMeta=(function(){
   else if(location.href.indexOf('ebook')!=-1){
     var allNodes, isbn=null;
     allNodes = document.evaluate('//a[@itemprop="isbn"]',document,null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,null);//获取isbn
-    //alert(allNodes.snapshotItem(0));
     if(allNodes.snapshotItem(0)){
         isbn=allNodes.snapshotItem(0).innerHTML;
-      //alert(isbn);
     }
 //////////////
 
@@ -170,21 +175,18 @@ bookMeta=(function(){
             if(bracketIndex!=-1){
             title=title.slice(0,bracketIndex);
         }
-      //alert(title);
     }
 
     var publisher;
     allNodes = document.evaluate('//span[@itemprop="publisher"]',document,null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,null);
     if(allNodes.snapshotItem(0)){
         publisher=allNodes.snapshotItem(0).innerHTML;
-      //alert(publisher);
     }
 
     var author;
     allNodes = document.evaluate('//span[@itemprop="author"]',document,null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,null);
     if(allNodes.snapshotItem(0)){
         author=allNodes.snapshotItem(0).innerHTML;
-      //alert(author);
     }
 
     var pubdate;
@@ -192,7 +194,6 @@ bookMeta=(function(){
     if(allNodes.snapshotItem(0)){
         pubdate=allNodes.snapshotItem(0).innerHTML;
         pubdate=pubdate.slice(0,4);
-      //alert(pubdate);
     }    
 
     var rating='暂无评分';
@@ -281,11 +282,11 @@ var isbn10=ISBN10(isbn,pubdate);
     "isbn": isbn,
     "bookIndex": bookIndex,
     "rating": rating,
-    "isbn10": isbn10
+    "isbn10": isbn10,
+    "lan":"zh"//语言
   };
 })();
 
-//alert(bookMeta.isbn10);
 
 
 //各学校元信息
@@ -308,6 +309,8 @@ var schoolInfo={
     name:"华南理工大学",
     anySearchUrl:"http://202.38.232.10/opac/servlet/opac.go?CLANLINK=&CODE=&FIELD1=TITLE&MARCTYPE=&MODE=FRONT&ORGLIB=SCUT&PAGE=&RDID=ANONYMOUS&SCODE=&TABLE=&VAL1=%s&cmdACT=simple.list&libcode=",
     isbnSearchUrl:"http://202.38.232.10/opac/servlet/opac.go?CLANLINK=&CODE=&FIELD1=ISBN&MARCTYPE=&MODE=FRONT&ORGLIB=SCUT&PAGE=&RDID=ANONYMOUS&SCODE=&TABLE=&VAL1=%s&cmdACT=simple.list&libcode=",
+    anyForeianSearchUrl:"http://202.38.232.10/opac/servlet/opac.go?CLANLINK=&CODE=&FIELD1=TITLE&MARCTYPE=&MODE=FRONT&ORGLIB=SCUT&PAGE=&RDID=ANONYMOUS&SCODE=&TABLE=&VAL1=%s&cmdACT=simple.list&libcode=",
+    isbnForeianSearchUrl:"http://202.38.232.10/opac/servlet/opac.go?CLANLINK=&CODE=&FIELD1=ISBN&MARCTYPE=&MODE=FRONT&ORGLIB=SCUT&PAGE=&RDID=ANONYMOUS&SCODE=&TABLE=&VAL1=%s&cmdACT=simple.list&libcode=",
     abbrName:"华理工",
     isGBK:false,
     recommendUrl:"http://202.38.232.10/opac/servlet/opac.go?cmdACT=recommend.form"
@@ -339,6 +342,7 @@ var schoolInfo={
     anySearchUrl:"http://opac.gdufs.edu.cn:8991/F/?find_code=WRD&request=%s&func=find-b",
     isbnSearchUrl:"http://opac.gdufs.edu.cn:8991/F/?func=find-b&find_code=ISB&request=%s&local_base=GWD01",
     isbnForeianSearchUrl:"http://opac.gdufs.edu.cn:8991/F/?func=find-b&find_code=ISB&request=%s&local_base=GWD09",
+    recommendUrl:"http://opac.gdufs.edu.cn:8118/apsm/recommend/recommend_nobor.jsp",
     isGBK:false
 
 },
@@ -381,7 +385,46 @@ var schoolInfo={
     isGBK:true
 },
 
+
+"zhizhen":{
+    name:"超星发现",
+    abbrName:"超星发现",
+    anySearchUrl:"http://ss.zhizhen.com/s?strchannel=11&adv=Z%3D%s&aorp=a&size=15&isort=0&x=0_17#searchbody",
+    isbnSearchUrl:"http://ss.zhizhen.com/s?adv=I%3D%s&aorp=a&size=15&isort=0&x=0_17#searchbody",
+    //anyForeianSearchUrl:"http://ss.zhizhen.com/s?strchannel=11&adv=Z%3D%s&aorp=a&size=15&isort=0&x=0_17#searchbody",
+    isGBK:false
+},
+
+"chaoxing":{
+    name:"超星读书",
+    abbrName:"超星读书",
+    anySearchUrl:"http://book.chaoxing.com/search/name/%s/bookList1_.html",
+    //isbnSearchUrl:"http://ss.zhizhen.com/s?adv=I%3D%s&aorp=a&size=15&isort=0&x=0_17#searchbody",
+    isGBK:false
+},
+
+"CALIS":{
+    name:"CALIS",
+    abbrName:"CALIS",
+    anySearchUrl:"http://opac.calis.edu.cn/doSimpleQuery.do?actionType=doSimpleQuery&dbselect=all&indexkey=dc.title%7Cinc&langBase=default&maximumRecords=50&operation=searchRetrieve&pageno=1&pagingType=0&query=(dc.title%3D%22*%s*%22)&sortkey=title&startRecord=1&version=1.1",
+    isbnSearchUrl:"http://opac.calis.edu.cn/doSimpleQuery.do?actionType=doSimpleQuery&dbselect=all&indexkey=bath.isbn|frt&langBase=default&maximumRecords=50&operation=searchRetrieve&pageno=1&pagingType=0&query=%28bath.isbn%3D%22%s*%22%29&sortkey=title&startRecord=1&version=1.1",
+    isGBK:false
+},
+
+"NLC":{
+    name:"中国国家图书馆",
+    abbrName:"国家馆",
+    anySearchUrl:"http://opac.nlc.gov.cn/F?func=find-b&find_code=WTP&request=%s&local_base=NLC01&filter_code_1=WLN&filter_request_1=&filter_code_2=WYR&filter_request_2=&filter_code_3=WYR&filter_request_3=&filter_code_4=WFM&filter_request_4=&filter_code_5=WSL&filter_request_5=",
+    isbnSearchUrl:"http://opac.nlc.gov.cn/F?find_code=ISB&request=%s&local_base=NLC01&func=find-b",
+    isGBK:false
+},
+
 //广东药学院,由于编码问题和没提供ISBN检索，暂不支持//
+"GDPU":{
+    name:"广东药学院",
+    abbrName:"广药"
+}
+
 }
 
 
@@ -389,10 +432,6 @@ var schoolInfo={
 
 
 function popSetting(){
-        GM_addStyle("#libSetting {background: #F6F6F1;border: 1px solid #aaa;box-shadow: 0 0 8px 2px #777;height: auto;left: 320px;min-height: 100px;padding: 0 20px 65px;position: fixed;top: 25%;width: 600px;z-index: 1000002;}"+
-'.setbtn{display: inline-block; background: #33A057; border: 1px solid #2F7B4B; color: white; padding: 1px 10px; border-radius: 3px; margin-right: 8px;margin:5px;cursor:pointer;} ');
-
-
     var settingDiv = document.createElement("div");
     settingDiv.setAttribute("id","libSetting");
     settingDiv.innerHTML="<h2>图书馆检索设置</h2>"+
@@ -401,7 +440,6 @@ function popSetting(){
     '<option value="GDUT">广东工业大学</option><option value="GZHU">广州大学</option>'+
     '<option value="GZHTCM">广州中医药大学</option><option value="GZARTS">广州美术学院</option><option value="XHCOM">星海音乐学院</option></select>'+'&nbsp&nbsp'+
     '学号<input id="setstudentID" class="barname">'+'&nbsp&nbsp&nbsp'+
-    //'password<input id="setpassword" class="barname">'+'<br>'+
     '校区<input id="setcampus" class="barname">'+'<br><br>'+
     '手机号<input id="settelephone" class="barname">'+'&nbsp&nbsp'+
     '姓名<input id="setname" class="barname">'+'&nbsp&nbsp'+
@@ -419,11 +457,9 @@ function popSetting(){
     document.getElementById("seteMail").value=prefs.eMail;
     document.getElementById("setLibID").value=prefs.libraryId;
     function setSaving(){
-        //alert(document.getElementById("setstudentID").value);
-        GM_setValue("school",document.getElementById("setschool").value);
 
+        GM_setValue("school",document.getElementById("setschool").value);
         GM_setValue("studentID",document.getElementById("setstudentID").value);
-        //alert(GM_getValue("studentID"));
         GM_setValue("campus",document.getElementById("setcampus").value);
         GM_setValue("telephone",document.getElementById("settelephone").value);
         GM_setValue("name",document.getElementById("setname").value);
@@ -432,11 +468,6 @@ function popSetting(){
         settingDiv.parentNode.removeChild(settingDiv);
         location.reload();    
     } 
-    //function setClosing(){
-        //alert(document.getElementById("setstudentID").value);
-        
-   
-    //} 
     document.getElementById("setsave").addEventListener("click",setSaving,false); 
     document.getElementById("setclose").addEventListener("click",function(){settingDiv.parentNode.removeChild(settingDiv)},false);
     
@@ -450,36 +481,23 @@ var isbnFilter={
     SYSU: {
 
         respond:function (reDetails,frameLocation,fullUrl) {
-
-              //var fullUrl = reDetails.finalUrl;
               if (reDetails.status !== 200&&reDetails.status !== 304){
                 var msg = new LibMeta("SYSU");
                 msg.state="error";
                 msg.errorMsg="ISBN连接错误";
-                //alert("ISBN连接错误");//后续版本再处理
                 messageCatcher(msg,frameLocation);
                 return;
               }
               //document.getElementById("footer").textContent=reDetails.responseText;
               if(reDetails.responseText.indexOf('indexpage')!=-1){
-                  //alert("ISBN查无此书"); //增加荐购
                   var msg = new LibMeta("SYSU");
                   msg.state="recommend";
-                  //hasBook = false;
-                  //recommendBook();
+
                   messageCatcher(msg,frameLocation);
                   return;
               }
-
-                //document.getElementById("footer").textContent=reDetails.responseText;
-                //var frame =document.createElement("div");
-                //frame.innerHTML = reDetails.responseText;
-                //alert(frame.innerHTML);
                 if(reDetails.responseText.indexOf('Search Results')!=-1){
-                    //alert("跳转到搜索页");
-                    //var frame =document.createElement("div");
-                //frame.innerHTML = reDetails.responseText;
-                //document.getElementById("reviews").textContent=frame.innerHTML;          
+        
                 
                     titleFilter.SYSU.filter(reDetails.responseText,fullUrl,frameLocation);
                     
@@ -502,9 +520,6 @@ var isbnFilter={
         str = str.replace(/[ | ]*\n/g,''); //去除行尾空白
         str = str.replace(/\n[\s| | ]*\r/g,''); //去除多余空行
         str = str.replace(/amp;/g,""); //去除URL转码
-        //alert(str);
-
-
         ///获取一整块
         var eBook;
         eBook = null;
@@ -515,22 +530,18 @@ var isbnFilter={
         if(!eBook&&str.indexOf("索书")==-1){
             var msg = new LibMeta("SYSU");
             msg.state="recommend";
-            //recommendBook();
             messageCatcher(msg,frameLocation);
             return;
         }
         str = str.match(/全部馆藏(.*?)所有单册借阅状态/g)
-        //alert(typeof str[0]);
+
         var txt = str[0];
         txt = txt.match(/http:.*?sub_library=/)[0];
-        //alert(txt);
-    // alert(eBook);
-                //alert(typeof where);
+
             GM_xmlhttpRequest({ //获取列表
             method : 'GET',
            synchronous : false,
             url : txt,
-            //url : fullurl,//"http://202.116.64.108:8991/F/?func=find-b&find_code=ISB&request=7101003044",
             onload : function (reDetails) {
               if (reDetails.status !== 200&&reDetails.status !== 304){
                 var msg = new LibMeta("SYSU");
@@ -545,15 +556,12 @@ var isbnFilter={
                 isbnFilter.SYSU.getBookinfo(libra.innerHTML,eBook,frameLocation,txt);//回调函数馆藏位置获取
             }
         });
-
-//////////////////////////////////////////////
-
       },
+
 /////////////////回调函数馆藏位置获取////////////////////////////////////////
     getBookinfo:function(webText,eBook,frameLocation,url){
     var hasBook = true;
     webText = webText.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"");
-    //alert(webText);
 
     ///防止无书籍的情况发生
     if(webText.indexOf('无匹配单册')!=-1){
@@ -564,9 +572,7 @@ var isbnFilter={
     }
     else{
     blockBook = webText.match(/OPAC注释(.*?)<\/tbody>/)[1];
-    //alert(typeof blockBook);
     borrowItem = blockBook.match(/<tr>.*?<\/tr>/g);
-    //alert(borrowItem[0]);
     var loan = new Array();
 
       for(k=0;k<borrowItem.length;k++){
@@ -577,7 +583,6 @@ var isbnFilter={
     /////////////////
 
       if(hasBook){
-        //alert("hasBook");
         var storeList = new LibMeta("SYSU");
         storeList.state="store";
         storeList.items= new Array();
@@ -595,12 +600,11 @@ var isbnFilter={
            if(storeList.items[s].storeState.indexOf('外借')!=-1&&storeList.items[s].returnTime.indexOf("在架上")!=-1&&storeList.items[s].storeState.indexOf('闭架')==-1){
                 storeList.items[s].rentable=true;
            }
-
-           //alert(allBook);      
+ 
         }
-        //alert(storeList.items.length);
+
         if(eBook){
-          //get_eBook(eBook);
+
           var itemsLength=storeList.items.length;
           storeList.items[itemsLength]=new StoreItem("SYSU");         
           storeList.items[itemsLength].link=eBook;
@@ -608,14 +612,9 @@ var isbnFilter={
           storeList.items[itemsLength].storeState="电子书";
         };
       } 
-      //alert(storeList.items.length);
-      //return messageCatcher(storeList);
-      //alert(storeList.school+" zsdx");
       messageCatcher(storeList,frameLocation);
       return null;
-      
-        //allBook += '</div>' 
-        //$('.aside').prepend(allBook);
+
     //////////////////////完成框架插入//////////////
           }
     },
@@ -630,32 +629,24 @@ var isbnFilter={
           messageCatcher(msg,frameLocation);
           return;
           }
-              //document.getElementById("footer").textContent=reDetails.responseText;
           if(reDetails.responseText.indexOf('无符合')!=-1){
                   //alert("ISBN查无此书"); //增加荐购
             var msg = new LibMeta("SCUT");
             msg.state="recommend";
-                  //hasBook = false;
-                  //recommendBook();
             messageCatcher(msg,frameLocation);
             return;
           }
-
-          //document.getElementById("reviews").textContent=reDetails.responseText;
           isbnFilter.SCUT.filter(reDetails.responseText,frameLocation);
 
       },
       filter:function(text,frameLocation){
-        //http://202.38.232.10/opac/servlet/opac.go?SORTFIELD=CALLNO&SORTORDER=asc&bookid=413213&cmdACT=query.bookdetail&libcode=
         text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"");
         rowText = text.match(/javascript:book_detail.*?<\/tr>/g);
-        //alert(rowText);
 
         var bookBlock = new Array();
         var bookDetail = new Array();
         for(s=0;s<rowText.length;s++){
           bookBlock[s] = rowText[s].match(/\((\d+\.?\d*)\)">(.*?)<\/a>.*?F">(.*?)<\/TD>.*?F">(.*?)<\/TD>.*?F">(.*?)<\/TD>.*?F">(.*?)<\/TD>.*?F">(.*?)<\/TD>.*?F">(.*?)<\/TD>/);
-          //alert(bookBlock[s].length);
           bookBlock[s].shift();
 
         }
@@ -678,18 +669,14 @@ var isbnFilter={
             method : 'GET',
            synchronous : false,
             url : list.items[0].link,
-            //url : fullurl,//"http://202.116.64.108:8991/F/?func=find-b&find_code=ISB&request=7101003044",
             onload : function (reDetails) {
               if (reDetails.status !== 200&&reDetails.status !== 304){
                 var msg = new LibMeta("SCUT");
                 msg.state="error";
                 msg.errorMsg="无法获取馆藏列表";
-                //alert("ISBN连接错误");//后续版本再处理
                 messageCatcher(msg,frameLocation);
                 return;
               }
-                //var libra =document.createElement("div");
-                //document.getElementById("reviews").textContent=reDetails.responseText;
                 getStoreFilter(reDetails.responseText,frameLocation,list.items[0].link);//回调函数馆藏位置获取
             }
         });
@@ -701,19 +688,12 @@ var isbnFilter={
           text=text.match(/id="queryholding".*?<\/table>/);
           var row;
           row=text[0].match(/<tr>.*?<\/tr>/g);
-          //alert(row.length);
           row.shift();
-          //alert(row[0]);
-
           var storeBlock = new Array();
           for(s=0;s<row.length;s++){
           storeBlock[s] = row[s].match(/"8%">(.*?)<\/td>.*?F">(.*?)<\/td.*?8%">(.*?)<\/td>.*?4%">(.*?)<\/td>.*?8%">(.*?)<\/td>.*?8%">(.*?)<\/td>.*?0%">(.*?)<\/td>/);
-          //alert(bookBlock[s].length);
           storeBlock[s].shift();
-
-
         }
-
           var storeList = new LibMeta("SCUT");
           storeList.state="store";
           storeList.items= new Array();
@@ -745,42 +725,30 @@ var isbnFilter={
           var msg = new LibMeta("SCNU");
           msg.state="error";
           msg.errorMsg="ISBN连接错误";
-                //alert("ISBN连接错误");//后续版本再处理
           messageCatcher(msg,frameLocation);
           return;
           }
-              //document.getElementById("footer").textContent=reDetails.responseText;
           if(reDetails.responseText.indexOf('没有')!=-1){
-                  //alert("ISBN查无此书"); //增加荐购
             var msg = new LibMeta("SCNU");
             msg.state="recommend";
-                  //hasBook = false;
-                  //recommendBook();
+ 
             messageCatcher(msg,frameLocation);
             return;
           }
 
-          //document.getElementById("reviews").textContent=reDetails.responseText;
           isbnFilter.SCNU.filter(reDetails.responseText,frameLocation);
 
       },
 
       filter:function(text,frameLocation){
-        //http://202.38.232.10/opac/servlet/opac.go?SORTFIELD=CALLNO&SORTORDER=asc&bookid=413213&cmdACT=query.bookdetail&libcode=
         text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/ /g,"").replace(/\r/g,"");
         rowText = text.match(/book_list_info.*?<img/);
-        //alert(rowText.length);
-        //document.getElementById("reviews").textContent=rowText;        
-
         var bookBlock = new Array();
         var bookDetail = new Array();
         for(s=0;s<rowText.length;s++){
           bookBlock[s] = rowText[s].match(/marc_no=(\d+\.?\d*)">(.*?)<\/a>(.*?)<\/h3>.*?span>(.*?)<br>(.*?)<\/span>(.*?)<br\/>(.*?)<br\/>/);
-          //alert(bookBlock[s].length);
           bookBlock[s].shift();
         }
-
-
 
         var list = new LibMeta("SCNU");////构造函数
         list.state="booklist";
@@ -792,27 +760,21 @@ var isbnFilter={
            list.items[s].author = bookBlock[s][5];
            list.items[s].publisher = bookBlock[s][6];
            list.items[s].bookIndex = bookBlock[s][2];
-           //alert(list.items[s].bookName);
         }
-        //messageCatcher(list,frameLocation);
 
         //进一步获取馆藏
         GM_xmlhttpRequest({ //获取列表
             method : 'GET',
            synchronous : false,
             url : list.items[0].link,
-            //url : fullurl,//"http://202.116.64.108:8991/F/?func=find-b&find_code=ISB&request=7101003044",
             onload : function (reDetails) {
               if (reDetails.status !== 200&&reDetails.status !== 304){
                 var msg = new LibMeta("SCNU");
                 msg.state="error";
                 msg.errorMsg="无法获取馆藏列表";
-                //alert("ISBN连接错误");//后续版本再处理
                 messageCatcher(msg,frameLocation);
                 return;
               }
-                //var libra =document.createElement("div");
-                //document.getElementById("reviews").textContent=reDetails.responseText;
                 getStoreFilter(reDetails.responseText,frameLocation,list.items[0].link);//回调函数馆藏位置获取
             }
         });
@@ -823,15 +785,9 @@ var isbnFilter={
           text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/\r/g,"").replace(/ /g,"");
           var row;
           row=text.match(/whitetext.*?left/g);
-          //alert(row.length);
-          //row.shift();
-          //alert(row[0]);
-
           var storeBlock = new Array();
           for(s=0;s<row.length;s++){
-            //alert(row[s].replace(/[ | ]*/g,''));
             storeBlock[s] = row[s].match(/"10%">(.*?)<\/td>.*?title="(.*?)">.*?20%">(.*?)<\/td>/);
-            //alert(storeBlock[s].length);
             storeBlock[s].shift();
         }
 
@@ -842,9 +798,7 @@ var isbnFilter={
           for(s=0;s<storeBlock.length;s++){
             storeList.items[s]=new StoreItem("SCNU");
             storeList.items[s].storeState=storeBlock[s][2].replace(/ /g,"");
-            //storeList.items[s].returnTime=storeBlock[s][2];
             storeList.items[s].branch=storeBlock[s][1];
-            //storeList.items[s].location = storeBlock[s][1];
             storeList.items[s].bookIndex = storeBlock[s][0];
             storeList.items[s].link = finalUrl;
             if(storeList.items[s].storeState.indexOf('可借')!=-1){
@@ -870,31 +824,23 @@ var isbnFilter={
           messageCatcher(msg,frameLocation);
           return;
           }
-              //document.getElementById("footer").textContent=reDetails.responseText;
           if(reDetails.responseText.indexOf('没有')!=-1){
-                  //alert("ISBN查无此书"); //增加荐购
             var msg = new LibMeta("GDUT");
             msg.state="recommend";
-                  //hasBook = false;
-                  //recommendBook();
+
             messageCatcher(msg,frameLocation);
             return;
           }
 
-          //document.getElementById("reviews").textContent=reDetails.responseText;
           isbnFilter.GDUT.filter(reDetails.responseText,frameLocation);
 
       },
       filter:function(text,frameLocation){
         text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/\r/g,"").replace(/ /g,"");
         rowText = text.match(/class="tb".*?<\/table>/);
-        //alert(rowText.length);
-        //document.getElementById("reviews").textContent=rowText;        
-
         var bookBlock = new Array();
 
         bookBlock[0]=rowText[0].match(/(bookinfo.aspx\?ctrlno=\d+\.?\d*)".*?blank">(.*?)<\/a>.*?<td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td>/);
-        //alert(bookBlock[0].length);
 
         bookBlock[0].shift();
         var list = new LibMeta("GDUT");////构造函数
@@ -908,27 +854,20 @@ var isbnFilter={
            list.items[s].publisher = bookBlock[s][3];
            list.items[s].pubDate = bookBlock[s][4];
        }
-           //list.items[s].bookIndex = bookBlock[s][2];
-           //alert(list.items[s].link);
-
-
                 //进一步获取馆藏
         GM_xmlhttpRequest({ //获取列表
             method : 'GET',
            synchronous : false,
             url : list.items[0].link,
-            //url : fullurl,//"http://202.116.64.108:8991/F/?func=find-b&find_code=ISB&request=7101003044",
             onload : function (reDetails) {
               if (reDetails.status !== 200&&reDetails.status !== 304){
                 var msg = new LibMeta("GDUT");
                 msg.state="error";
                 msg.errorMsg="无法获取馆藏列表";
-                //alert("ISBN连接错误");//后续版本再处理
                 messageCatcher(msg,frameLocation);
                 return;
               }
-                //var libra =document.createElement("div");
-                //document.getElementById("reviews").textContent=reDetails.responseText;
+
                 getStoreFilter(reDetails.responseText,frameLocation,list.items[0].link);//回调函数馆藏位置获取
             }
         });
@@ -938,19 +877,12 @@ var isbnFilter={
           var row;
           row=text.match(/<tbody>.*?<\/tbody>/);
           row[0].replace(/ /g,"");
-          //alert(row[0]);
           row = row[0].match(/<tr>.*?<\/tr>/g);
- 
-          //alert(row.length);
-          //row.shift();
-          //alert(row[0]);
 
           var storeBlock = new Array();
           for(s=0;s<row.length;s++){
-            //alert(row[s].replace(/[ | ]*/g,''));
-            //alert(row[s]);
+
             storeBlock[s] = row[s].match(/showLibInfo.*?'>(.*?)<\/a><\/td><td>(.*?)<\/td><td>(.*?)<\/td>.*?tbr.*?<td>.*?<td>(.*?)<\/td>/);
-            //alert(storeBlock[s].length);
             storeBlock[s].shift();
         }
 
@@ -961,9 +893,7 @@ var isbnFilter={
           for(s=0;s<storeBlock.length;s++){
             storeList.items[s]=new StoreItem("GDUT");
             storeList.items[s].storeState=storeBlock[s][3];
-            //storeList.items[s].returnTime=storeBlock[s][2];
             storeList.items[s].branch=storeBlock[s][0];
-            //storeList.items[s].location = storeBlock[s][1];
             storeList.items[s].bookIndex = storeBlock[s][1];
             storeList.items[s].link = finalUrl;
             if(storeList.items[s].storeState.indexOf('可供出借')!=-1){
@@ -1001,65 +931,46 @@ var isbnFilter={
                   return;
               }
 
-                //document.getElementById("footer").textContent=reDetails.responseText;
-                //var frame =document.createElement("div");
-                //frame.innerHTML = reDetails.responseText;
-                //alert(frame.innerHTML);
                 if(reDetails.responseText.indexOf('Search Results')!=-1){
-                    //alert("跳转到搜索页");
-                    //var frame =document.createElement("div");
-                //frame.innerHTML = reDetails.responseText;
-                //document.getElementById("reviews").textContent=frame.innerHTML;          
-                
                     titleFilter.GDUFS.filter(reDetails.responseText,fullUrl,frameLocation);
-                    
                 }
                 else{
                   isbnFilter.GDUFS.filter(reDetails.responseText,frameLocation);
-
                 }
                 
                 return;
         },
 
-
         filter:function(gettxt,frameLocation){
-            //alert(typeof where);
+
         /////////////////////////////////////////////////////////
 
         str = gettxt;
         str = str.replace(/[ | ]*\n/g,''); //去除行尾空白
         str = str.replace(/\n[\s| | ]*\r/g,''); //去除多余空行
         str = str.replace(/amp;/g,""); //去除URL转码
-        //alert(str);
-
 
         ///获取一整块
         var eBook;
         eBook = null;
         if(str.match(/电子资源定位/)){
-        //document.getElementById("footer").textContent=str;
         eBook = str.match(/电子资源定位.*?jpg.*?File Extension: url">(.*?)<\/a>/)[1];
         }
         if(!eBook&&str.indexOf("索书")==-1){
             var msg = new LibMeta("GDUFS");
             msg.state="recommend";
-            //recommendBook();
             messageCatcher(msg,frameLocation);
             return;
         }
         str = str.match(/全部馆藏(.*?)所有单册/g)
-        //alert(typeof str[0]);
         var txt = str[0];
         txt = txt.match(/http:.*?sub_library=/);
         where=txt;
-        //alert(txt);
-    // alert(eBook);
+
             GM_xmlhttpRequest({ //获取列表
             method : 'GET',
            synchronous : false,
             url : where[0],
-            //url : fullurl,//"http://202.116.64.108:8991/F/?func=find-b&find_code=ISB&request=7101003044",
             onload : function (reDetails) {
               if (reDetails.status !== 200&&reDetails.status !== 304){
                 var msg = new LibMeta("GDUFS");
@@ -1074,20 +985,12 @@ var isbnFilter={
                 isbnFilter.GDUFS.getBookinfo(libra.innerHTML,eBook,frameLocation,where[0]);//回调函数馆藏位置获取
             }
         });
-        //alert(txt);
-        
-
-
-//////////////////////////////////////////////
-
-
- 
       },
+
       /////////////////回调函数馆藏位置获取////////////////////////////////////////
     getBookinfo:function(webText,eBook,frameLocation,finalUrl){
     var hasBook = true;
     webText = webText.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"");
-    //alert(webText);
 
     ///防止无书籍的情况发生
     if(webText.indexOf('无匹配单册')!=-1){
@@ -1118,16 +1021,7 @@ var isbnFilter={
 
 
         for(s=0;s<borrowItem.length;s++){
-            
-           //bookStatus =   '<ul class="ft pl more-after"> ' +
-           //               '<li style="border: none">单册状态:' + loan[s][1]+
-           //               '<span style="position:relative; left:20px;">应还日期: ' + loan[s][2].replace(/<br>/,"") +'</span></li>' + 
-                          //'<li style="border: none">到期: ' + loan[s][3] + '</li>' +
-           //               '<li style="border: none">分馆: ' + loan[s][4] + '</li>' +
-            //              '</ul>';
-                          
-                         
-           //allBook += bookStatus;
+
            storeList.items[s]=new StoreItem("GDUFS");
            storeList.items[s].storeState=loan[s][1];
            storeList.items[s].returnTime=loan[s][2].replace(/<br>/,"");
@@ -1136,13 +1030,11 @@ var isbnFilter={
            storeList.items[s].link=finalUrl;
            if(storeList.items[s].storeState.indexOf('外借')!=-1&&storeList.items[s].returnTime.indexOf('在架上')!=-1&&storeList.items[s].storeState.indexOf('闭架')==-1){//闭架无法预约
                 storeList.items[s].rentable=true;
-           }
-
-           //alert(allBook);      
+           } 
         }
-        //alert(storeList.items.length);
+ 
         if(eBook){
-          //get_eBook(eBook);
+
           var itemsLength=storeList.items.length;
           storeList.items[itemsLength]=new StoreItem("GDUFS");         
           storeList.items[itemsLength].link=eBook;
@@ -1150,13 +1042,8 @@ var isbnFilter={
           storeList.items[itemsLength].storeState="电子书";
         };
       } 
-      //alert(storeList.items.length);
-      //return messageCatcher(storeList);
-      //alert(storeList.school+" gw");
       messageCatcher(storeList,frameLocation);
-      
-        //allBook += '</div>' 
-        //$('.aside').prepend(allBook);
+
     //////////////////////完成框架插入//////////////
           }
     },
@@ -1168,42 +1055,31 @@ var isbnFilter={
           var msg = new LibMeta("GZHTCM");
           msg.state="error";
           msg.errorMsg="ISBN连接错误";
-                //alert("ISBN连接错误");//后续版本再处理
           messageCatcher(msg,frameLocation);
           return;
           }
-              //document.getElementById("footer").textContent=reDetails.responseText;
           if(reDetails.responseText.indexOf('没有')!=-1){
-                  //alert("ISBN查无此书"); //增加荐购
             var msg = new LibMeta("GZHTCM");
             msg.state="recommend";
-                  //hasBook = false;
-                  //recommendBook();
+
             messageCatcher(msg,frameLocation);
             return;
           }
-
-          //document.getElementById("reviews").textContent=reDetails.responseText;
           isbnFilter.GZHTCM.filter(reDetails.responseText,frameLocation);
 
       },
 
       filter:function(text,frameLocation){
-        //http://202.38.232.10/opac/servlet/opac.go?SORTFIELD=CALLNO&SORTORDER=asc&bookid=413213&cmdACT=query.bookdetail&libcode=
         text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/ /g,"").replace(/\r/g,"");
         rowText = text.match(/book_list_info.*?<img/);
-        //alert(rowText.length);
         //document.getElementById("reviews").textContent=rowText;        
 
         var bookBlock = new Array();
         var bookDetail = new Array();
         for(s=0;s<rowText.length;s++){
           bookBlock[s] = rowText[s].match(/marc_no=(\d+\.?\d*)">(.*?)<\/a>(.*?)<\/h3>.*?span>(.*?)<br>(.*?)<\/span>(.*?)<br\/>(.*?)<br\/>/);
-          //alert(bookBlock[s].length);
           bookBlock[s].shift();
         }
-
-
 
         var list = new LibMeta("GZHTCM");////构造函数
         list.state="booklist";
@@ -1215,16 +1091,13 @@ var isbnFilter={
            list.items[s].author = bookBlock[s][5];
            list.items[s].publisher = bookBlock[s][6];
            list.items[s].bookIndex = bookBlock[s][2];
-           //alert(list.items[s].bookName);
         }
-        //messageCatcher(list,frameLocation);
 
         //进一步获取馆藏
         GM_xmlhttpRequest({ //获取列表
             method : 'GET',
            synchronous : false,
             url : list.items[0].link,
-            //url : fullurl,//"http://202.116.64.108:8991/F/?func=find-b&find_code=ISB&request=7101003044",
             onload : function (reDetails) {
               if (reDetails.status !== 200&&reDetails.status !== 304){
                 var msg = new LibMeta("GZHTCM");
@@ -1234,8 +1107,6 @@ var isbnFilter={
                 messageCatcher(msg,frameLocation);
                 return;
               }
-                //var libra =document.createElement("div");
-                //document.getElementById("reviews").textContent=reDetails.responseText;
                 getStoreFilter(reDetails.responseText,frameLocation,list.items[0].link);//回调函数馆藏位置获取
             }
         });
@@ -1246,16 +1117,9 @@ var isbnFilter={
           text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/\r/g,"").replace(/ /g,"");
           var row;
           row=text.match(/whitetext.*?left/g);
-          //alert(row.length);
-          //row.shift();
-          //alert(row[0]);
-
           var storeBlock = new Array();
           for(s=0;s<row.length;s++){
-            //alert(row[s].replace(/[ | ]*/g,''));
-            //alert(row[s]);
             storeBlock[s] = row[s].match(/"10%">(.*?)<\/td>.*?gif"\/>(.*?)<\/td>.*?20%">(.*?)<\/td>/);
-            //alert(storeBlock[s].length);
             storeBlock[s].shift();
         }
 
@@ -1266,9 +1130,7 @@ var isbnFilter={
           for(s=0;s<storeBlock.length;s++){
             storeList.items[s]=new StoreItem("GZHTCM");
             storeList.items[s].storeState=storeBlock[s][2].replace(/ /g,"");
-            //storeList.items[s].returnTime=storeBlock[s][2];
             storeList.items[s].branch=storeBlock[s][1];
-            //storeList.items[s].location = storeBlock[s][1];
             storeList.items[s].bookIndex = storeBlock[s][0];
             storeList.items[s].link = finalUrl;
             if(storeList.items[s].storeState.indexOf('可借')!=-1){
@@ -1295,32 +1157,26 @@ var isbnFilter={
           messageCatcher(msg,frameLocation);
           return;
           }
-              //document.getElementById("footer").textContent=reDetails.responseText;
           if(reDetails.responseText.indexOf('找不到')!=-1){
                   //alert("ISBN查无此书"); //增加荐购
             var msg = new LibMeta("GZHU");
             msg.state="recommend";
-                  //hasBook = false;
-                  //recommendBook();
+
             messageCatcher(msg,frameLocation);
             return;
           }
 
-          //document.getElementById("reviews").textContent=reDetails.responseText;
           isbnFilter.GZHU.filter(reDetails.responseText,frameLocation);
 
       },
       filter:function(text,frameLocation){
         text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/ /g,"").replace(/\r/g,"");
         rowText = text.match(/book_info>.*?<\/div>/g);
-        //alert(rowText.length);
-        //document.getElementById("reviews").textContent=rowText[0];  
 
         var bookBlock = new Array();
         var bookDetail = new Array();
         for(s=0;s<rowText.length;s++){
           bookBlock[s] = rowText[s].match(/href="(.*?)"target="_blank">(.*?)<\/a><span>(.*?)<\/span>.*?<h4>(.*?)&nbsp;/);
-          //alert(bookBlock[s].length);
           bookBlock[s].shift();
         }
 
@@ -1333,18 +1189,14 @@ var isbnFilter={
            list.items[s].bookName = bookBlock[s][1];
            list.items[s].author = bookBlock[s][2];
            list.items[s].publisher = bookBlock[s][3];
-
-           //list.items[s].bookIndex = bookBlock[s][2];
-           //alert(list.items[s].bookName);
         }
-        //messageCatcher(list,frameLocation);
+
 
         //进一步获取馆藏
         GM_xmlhttpRequest({ //获取列表
             method : 'GET',
            synchronous : false,
             url : list.items[0].link,
-            //url : fullurl,//"http://202.116.64.108:8991/F/?func=find-b&find_code=ISB&request=7101003044",
             onload : function (reDetails) {
               if (reDetails.status !== 200&&reDetails.status !== 304){
                 var msg = new LibMeta("GZHU");
@@ -1354,8 +1206,7 @@ var isbnFilter={
                 messageCatcher(msg,frameLocation);
                 return;
               }
-                //var libra =document.createElement("div");
-                //document.getElementById("reviews").textContent=reDetails.responseText;
+
                 getStoreFilter(reDetails.responseText,frameLocation,list.items[0].link);//回调函数馆藏位置获取
             }
         });
@@ -1366,18 +1217,14 @@ var isbnFilter={
           var bookIndex = text.match(/索书号.*?<td>(.*?)<\/td>/)[1];
           
           text=text.match(/holdings_info_content.*?clear/);
-          //alert(row.length);
-          //row.shift();
+
           row = text[0].match(/<td>.*?<\/tr>/g);
-          //alert(row.length);
 
 
           var storeBlock= new Array();
           for(s=0;s<row.length;s++){
-            //row[s].shift();
 
             storeBlock[s] = row[s].match(/<td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<a.*?<\/tr>/);
-            //alert(storeBlock[s].length);
             storeBlock[s].shift();
         }
 
@@ -1395,8 +1242,6 @@ var isbnFilter={
             if(storeList.items[s].storeState.indexOf('在馆')!=-1){
                 storeList.items[s].rentable=true;
             }
-            //storeList.items[s].location = storeBlock[s][1];
-            //storeList.items[s].bookIndex = storeBlock[s][0];
           }
            messageCatcher(storeList,frameLocation);
            return;
@@ -1419,36 +1264,25 @@ var isbnFilter={
           messageCatcher(msg,frameLocation);
           return;
           }
-              //document.getElementById("footer").textContent=reDetails.responseText;
           if(reDetails.responseText.indexOf('没有')!=-1){
                   //alert("ISBN查无此书"); //增加荐购
             var msg = new LibMeta("GZARTS");
             msg.state="recommend";
-                  //hasBook = false;
-                  //recommendBook();
+
             messageCatcher(msg,frameLocation);
             return;
           }
 
-          //document.getElementById("reviews").textContent=reDetails.responseText;
+
           isbnFilter.GZARTS.filter(reDetails.responseText,frameLocation);
 
       },
       filter:function(text,frameLocation){
         text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/\r/g,"").replace(/ /g,"");
         rowText = text.match(/class="tb".*?<\/table>/);
-        //alert(rowText.length);
-        //document.getElementById("reviews").textContent=rowText;        
 
         var bookBlock = new Array();
-        //var bookDetail = new Array();
-        /*
-        for(s=0;s<rowText.length;s++){
-          bookBlock[s] = rowText[s].match(/marc_no=(\d+\.?\d*)">(.*?)<\/a>(.*?)<\/h3>.*?span>(.*?)<br>(.*?)<\/span>(.*?)<br\/>(.*?)<br\/>/);
-          //alert(bookBlock[s].length);
-          bookBlock[s].shift();
-        }
-        */
+
         bookBlock[0]=rowText[0].match(/(bookinfo.aspx\?ctrlno=\d+\.?\d*)".*?blank">(.*?)<\/a>.*?<td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td>/);
         //alert(bookBlock[0].length);
 
@@ -1464,16 +1298,13 @@ var isbnFilter={
            list.items[s].publisher = bookBlock[s][3];
            list.items[s].pubDate = bookBlock[s][4];
        }
-           //list.items[s].bookIndex = bookBlock[s][2];
-           //alert(list.items[s].link);
-
 
                 //进一步获取馆藏
         GM_xmlhttpRequest({ //获取列表
             method : 'GET',
            synchronous : false,
             url : list.items[0].link,
-            //url : fullurl,//"http://202.116.64.108:8991/F/?func=find-b&find_code=ISB&request=7101003044",
+
             onload : function (reDetails) {
               if (reDetails.status !== 200&&reDetails.status !== 304){
                 var msg = new LibMeta("GZARTS");
@@ -1483,31 +1314,25 @@ var isbnFilter={
                 messageCatcher(msg,frameLocation);
                 return;
               }
-                //var libra =document.createElement("div");
-                //document.getElementById("reviews").textContent=reDetails.responseText;
+
                 getStoreFilter(reDetails.responseText,frameLocation,list.items[0].link);//回调函数馆藏位置获取
             }
         });
 
         function  getStoreFilter(text,frameLocation,finalUrl){
           text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/\r/g,"").replace(/ /g,"");
-          //document.getElementById("reviews").textContent=text;
+
           var row;
           row=text.match(/<tbody>.*?<\/tbody>/);
           row[0].replace(/ /g,"");
-          //alert(row[0]);
+
           row = row[0].match(/<tr>.*?<\/tr>/g);
- 
-          //alert(row.length);
-          //row.shift();
-          //alert(row[0]);
 
           var storeBlock = new Array();
           for(s=0;s<row.length;s++){
-            //alert(row[s].replace(/[ | ]*/g,''));
-            //alert(row[s]);
+
             storeBlock[s] = row[s].match(/showLibInfo.*?'>(.*?)<\/a><\/td><td>(.*?)<\/td><td>(.*?)<\/td>.*?tbr.*?<td>.*?<td>(.*?)<\/td>/);
-            //alert(storeBlock[s].length);
+
             storeBlock[s].shift();
         }
           var storeList = new LibMeta("GZARTS");
@@ -1545,36 +1370,24 @@ var isbnFilter={
           messageCatcher(msg,frameLocation);
           return;
           }
-              //document.getElementById("footer").textContent=reDetails.responseText;
           if(reDetails.responseText.indexOf('没有')!=-1){
-                  //alert("ISBN查无此书"); //增加荐购
+
             var msg = new LibMeta("XHCOM");
             msg.state="recommend";
-                  //hasBook = false;
-                  //recommendBook();
+
             messageCatcher(msg,frameLocation);
             return;
           }
 
-          //document.getElementById("reviews").textContent=reDetails.responseText;
           isbnFilter.XHCOM.filter(reDetails.responseText,frameLocation);
 
       },
       filter:function(text,frameLocation){
         text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/\r/g,"").replace(/ /g,"");
         rowText = text.match(/class="tb".*?<\/table>/);
-        //alert(rowText.length);
-        //document.getElementById("reviews").textContent=rowText;        
+      
 
         var bookBlock = new Array();
-        //var bookDetail = new Array();
-        /*
-        for(s=0;s<rowText.length;s++){
-          bookBlock[s] = rowText[s].match(/marc_no=(\d+\.?\d*)">(.*?)<\/a>(.*?)<\/h3>.*?span>(.*?)<br>(.*?)<\/span>(.*?)<br\/>(.*?)<br\/>/);
-          //alert(bookBlock[s].length);
-          bookBlock[s].shift();
-        }
-        */
         bookBlock[0]=rowText[0].match(/(bookinfo.aspx\?ctrlno=\d+\.?\d*)".*?blank">(.*?)<\/a>.*?<td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td>/);
         //alert(bookBlock[0].length);
 
@@ -1590,8 +1403,7 @@ var isbnFilter={
            list.items[s].publisher = bookBlock[s][3];
            list.items[s].pubDate = bookBlock[s][4];
        }
-           //list.items[s].bookIndex = bookBlock[s][2];
-           //alert(list.items[s].link);
+
 
 
                 //进一步获取馆藏
@@ -1599,7 +1411,7 @@ var isbnFilter={
             method : 'GET',
            synchronous : false,
             url : list.items[0].link,
-            //url : fullurl,//"http://202.116.64.108:8991/F/?func=find-b&find_code=ISB&request=7101003044",
+
             onload : function (reDetails) {
               if (reDetails.status !== 200&&reDetails.status !== 304){
                 var msg = new LibMeta("XHCOM");
@@ -1609,31 +1421,23 @@ var isbnFilter={
                 messageCatcher(msg,frameLocation);
                 return;
               }
-                //var libra =document.createElement("div");
-                //document.getElementById("reviews").textContent=reDetails.responseText;
                 getStoreFilter(reDetails.responseText,frameLocation,list.items[0].link);//回调函数馆藏位置获取
             }
         });
 
         function  getStoreFilter(text,frameLocation,finalUrl){
           text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/\r/g,"").replace(/ /g,"");
-          //document.getElementById("reviews").textContent=text;
+
           var row;
           row=text.match(/<tbody>.*?<\/tbody>/);
           row[0].replace(/ /g,"");
           //alert(row[0]);
           row = row[0].match(/<tr>.*?<\/tr>/g);
- 
-          //alert(row.length);
-          //row.shift();
-          //alert(row[0]);
 
           var storeBlock = new Array();
           for(s=0;s<row.length;s++){
-            //alert(row[s].replace(/[ | ]*/g,''));
-            //alert(row[s]);
+
             storeBlock[s] = row[s].match(/showLibInfo.*?'>(.*?)<\/a><\/td><td>(.*?)<\/td><td>(.*?)<\/td>.*?tbr.*?<td>.*?<td>(.*?)<\/td>/);
-            //alert(storeBlock[s].length);
             storeBlock[s].shift();
         }
           var storeList = new LibMeta("XHCOM");
@@ -1669,33 +1473,17 @@ var titleFilter={
     SYSU:{
 
      respond:function(reDetails,frameLocation,fullUrl) {
-              //fullUrl=reDetails.finalUrl;
               if (reDetails.status !== 200&&reDetails.status !== 304){
                 var msg = new LibMeta("SYSU");
 
                 msg.state = "error";
                 msg.errorMsg = "搜索连接错误";
                 messageCatcher(msg,frameLocation);
-                ///error_log = "搜索连接错误";
-                ///error_output(error_log,fullurl);
-                ///alert("全字段搜索连接错误");
+
                 return;
               }
-
-              /*if(reDetails.responseText.indexOf('indexpage')!=-1){
-                  var msg = new LibMeta();
-                  msg.state = "error";
-                  msg.errorMsg = "全字段查无此书";
-                  ///hasBook = false;
-                  ///error_output(error_log,fullurl);
-                  messageCatcher(msg,frameLocation);
-                  return;
-              }*/
-                //var frame =document.createElement("div");
-                //frame.innerHTML = reDetails.responseText;
                 if(reDetails.responseText.indexOf('Search Results')!=-1){
-                    //alert("跳转到搜索页");
-                    //titleFilter.SYSU.filter(frame.innerHTML,fullurl);
+
                     titleFilter.SYSU.filter(reDetails.responseText,fullUrl,frameLocation);
                     return;
                 }
@@ -1703,21 +1491,14 @@ var titleFilter={
                     var msg = new LibMeta("SYSU");
                     msg.state = "error";
                     msg.errorMsg = "搜索页面跳转到了款目/轮排列表页面，<br>此页面无法获取图书详细信息。";
-                    ///error_log = "搜索页面跳转到了记录数页面，此页面无法获取图书详细信息。";
-                    ///error_output(error_log,fullurl);
+
                     messageCatcher(msg,frameLocation);
                     return;
                 }
-                else{
-
-                    //error_log = "搜索页面跳转到馆藏,<br>如果ISBN查询无结果，说明其跳转到了错误的图书。";
-                    //error_output(error_log,fullurl);
-                    
+                else{                    
                      isbnFilter.SYSU.filter(reDetails.responseText,frameLocation);
                      return;
-                    //showisbn(frame.innerHTML,fullurl);
-                  //return;
-                  //alert("全字段跳转ISBN馆藏");//BUG处理,以后再说,基本检索
+
                   //
                 }
       },
@@ -1728,11 +1509,8 @@ var titleFilter={
     str = str.replace(/[ | ]*\n/g,''); //去除行尾空白
     str = str.replace(/\n[\s| | ]*\r/g,''); //去除多余空行
     str = str.replace(/amp;/g,""); //去除URL转码
-    //alert(str);
-    //if(urltext.indexOf("ISB")){alert(str)};
     atxt= str.match(/col2>.*?<\/table>/g);
-    //alert(atxt.length);
-    //if(urltext.indexOf("ISB")){alert(atxt.length)};
+
     ///////获取图书馆书本元信息//////
     var bookDetail = new Array();//元信息数组
     atxt.shift();//去除整块信息中的多余信息
@@ -1745,10 +1523,6 @@ var titleFilter={
 
       ////////框架//////////////////////////////////
 
-        //hasBook = true;
-
-      //if(hasBook){
-
        //判断URL类型
        if(urltext.indexOf('ISB')!=-1){
         var allBook = '<div class="gray_ad" id="sysulib"><h2>中大ISBN检索</h2>' +
@@ -1758,7 +1532,7 @@ var titleFilter={
         var allBook = '<div class="gray_ad" id="sysulib"><h2>中大图书馆检索</h2>' +
                        '<a href="'+ urltext +'" target="_blank">前往图书馆查看这本书</a>';         
        }
-       //alert(allBook);
+
         var display;
         var list = new LibMeta("SYSU");////构造函数
         list.state="booklist";
@@ -1771,8 +1545,6 @@ var titleFilter={
               display="";
             }
 
-                                                 
-           //allBook += bookStatus;
            list.items[s] = new LibItem("SYSU");
            list.items[s].link = bookDetail[s][0];
            list.items[s].bookName = bookDetail[s][1];
@@ -1780,10 +1552,8 @@ var titleFilter={
            list.items[s].publisher = bookDetail[s][4];
            list.items[s].pubDate = bookDetail[s][5];
 
-           //alert(list.items[s].bookName);
         }
-        //alert(allBook);
-        //allBook += '</div>' 
+
         messageCatcher(list,frameLocation);
         //判断URL
   
@@ -1801,37 +1571,31 @@ var titleFilter={
           var msg = new LibMeta("SCUT");
           msg.state="error";
           msg.errorMsg="全字段连接错误";
-                //alert("ISBN连接错误");//后续版本再处理
           messageCatcher(msg,frameLocation);
           return;
           }
-              //document.getElementById("footer").textContent=reDetails.responseText;
           if(reDetails.responseText.indexOf('无符合')!=-1){
-                  //alert("ISBN查无此书"); //增加荐购
+
             var msg = new LibMeta("SCUT");
             msg.state="error";
           msg.errorMsg="全字段查无此书";
-                  //hasBook = false;
-                  //recommendBook();
+
             messageCatcher(msg,frameLocation);
             return;
           }
 
-          //document.getElementById("reviews").textContent=reDetails.responseText;
           titleFilter.SCUT.filter(reDetails.responseText,frameLocation);
 
       },
       filter:function(text,frameLocation){
-        //http://202.38.232.10/opac/servlet/opac.go?SORTFIELD=CALLNO&SORTORDER=asc&bookid=413213&cmdACT=query.bookdetail&libcode=
+
         text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"");
         rowText = text.match(/javascript:book_detail.*?<\/tr>/g);
-        //alert(rowText);
-
         var bookBlock = new Array();
         var bookDetail = new Array();
         for(s=0;s<rowText.length;s++){
           bookBlock[s] = rowText[s].match(/\((\d+\.?\d*)\)">(.*?)<\/a>.*?F">(.*?)<\/TD>.*?F">(.*?)<\/TD>.*?F">(.*?)<\/TD>.*?F">(.*?)<\/TD>.*?F">(.*?)<\/TD>.*?F">(.*?)<\/TD>/);
-          //alert(bookBlock[s].length);
+
           bookBlock[s].shift();
 
         }
@@ -1857,42 +1621,36 @@ var titleFilter={
 
     //南中国一般大学
     SCNU:{
-respond: function (reDetails, frameLocation) {
-  if (reDetails.status !== 200 && reDetails.status !== 304) {
-    var msg = new LibMeta('SCNU');
-    msg.state = 'error';
-    msg.errorMsg = '全字段检索连接错误';
-    //alert("ISBN连接错误");//后续版本再处理
-    messageCatcher(msg, frameLocation);
-    return;
-  }
-  //document.getElementById("footer").textContent=reDetails.responseText;
+        respond: function (reDetails, frameLocation) {
+          if (reDetails.status !== 200 && reDetails.status !== 304) {
+          var msg = new LibMeta('SCNU');
+          msg.state = 'error';
+          msg.errorMsg = '全字段检索连接错误';
+          messageCatcher(msg, frameLocation);
+          return;
+        }
 
-  if (reDetails.responseText.indexOf('没有') != - 1) {
+        if (reDetails.responseText.indexOf('没有') != - 1) {
     //alert("ISBN查无此书"); //增加荐购
-    var msg = new LibMeta('SCNU');
-    msg.state = 'error';
-    msg.errorMsg = '全字段查无此书';
-    //hasBook = false;
-    //recommendBook();
-    messageCatcher(msg, frameLocation);
-    return;
+        var msg = new LibMeta('SCNU');
+        msg.state = 'error';
+        msg.errorMsg = '全字段查无此书';
+    
+        messageCatcher(msg, frameLocation);
+        return;
   }
-  //document.getElementById("reviews").textContent=reDetails.responseText;
+
 
   titleFilter.SCNU.filter(reDetails.responseText, frameLocation);
 },
 filter: function (text, frameLocation) {
-  //http://202.38.232.10/opac/servlet/opac.go?SORTFIELD=CALLNO&SORTORDER=asc&bookid=413213&cmdACT=query.bookdetail&libcode=
   text = text.replace(/[ | ]*\n/g, '').replace(/\n[\s| | ]*\r/g, '').replace(/amp;/g, '').replace(/ /g, '').replace(/\r/g, '');
-  rowText = text.match(/book_list_info.*?<img/);
-  //alert(rowText.length);
-  //document.getElementById("reviews").textContent=rowText;        
+  rowText = text.match(/book_list_info.*?<img/g);
+      
   var bookBlock = new Array();
   var bookDetail = new Array();
   for (s = 0; s < rowText.length; s++) {
     bookBlock[s] = rowText[s].match(/marc_no=(\d+\.?\d*)">(.*?)<\/a>(.*?)<\/h3>.*?span>(.*?)<br>(.*?)<\/span>(.*?)<br\/>(.*?)<br\/>/);
-    //alert(bookBlock[s].length);
     bookBlock[s].shift();
   }
   var list = new LibMeta('SCNU'); ////构造函数
@@ -1905,7 +1663,7 @@ filter: function (text, frameLocation) {
     list.items[s].author = bookBlock[s][5];
     list.items[s].publisher = bookBlock[s][6];
     list.items[s].bookIndex = bookBlock[s][2];
-    //alert(list.items[s].bookName);
+
   }
    messageCatcher(list,frameLocation);
    return;
@@ -1921,18 +1679,15 @@ filter: function (text, frameLocation) {
           var msg = new LibMeta("GDUT");
           msg.state="error";
           msg.errorMsg="全字段连接错误";
-                //alert("ISBN连接错误");
           messageCatcher(msg,frameLocation);
           return;
           }
-              //document.getElementById("footer").textContent=reDetails.responseText;
+
           if(reDetails.responseText.indexOf('没有')!=-1){
                   //alert("ISBN查无此书"); //增加荐购
             var msg = new LibMeta("GDUT");
           msg.state="error";
           msg.errorMsg="全字段查无此书";
-                  //hasBook = false;
-                  //recommendBook();
             messageCatcher(msg,frameLocation);
             return;
           }
@@ -1943,34 +1698,26 @@ filter: function (text, frameLocation) {
       },
       filter:function(text,frameLocation){
         text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/\r/g,"").replace(/ /g,"");
-        rowText = text.match(/class="tb".*?<\/table>/);
-        //alert(rowText.length);
-        //document.getElementById("reviews").textContent=rowText;        
-
+        rowText = text.match(/(bookinfo.aspx\?ctrlno=\d+\.?\d*)".*?blank">(.*?)<\/a>.*?<td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td>/g);
         var bookBlock = new Array();
-        //var bookDetail = new Array();
-        /*
+
         for(s=0;s<rowText.length;s++){
-          bookBlock[s] = rowText[s].match(/marc_no=(\d+\.?\d*)">(.*?)<\/a>(.*?)<\/h3>.*?span>(.*?)<br>(.*?)<\/span>(.*?)<br\/>(.*?)<br\/>/);
-          //alert(bookBlock[s].length);
-          bookBlock[s].shift();
+            bookBlock[s]=rowText[s].match(/(bookinfo.aspx\?ctrlno=\d+\.?\d*)".*?blank">(.*?)<\/a>.*?<td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td>/);
+            bookBlock[s].shift();
         }
-        */
-        bookBlock[0]=rowText[0].match(/(bookinfo.aspx\?ctrlno=\d+\.?\d*)".*?blank">(.*?)<\/a>.*?<td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td>/);
-        //alert(bookBlock[0].length);
+
 
         bookBlock[0].shift();
         var list = new LibMeta("GDUT");////构造函数
         list.state="booklist";
         list.items= new Array();
-        for(s=0;s<rowText.length;s++){
+        for(s=0;s<bookBlock.length;s++){
            list.items[s] = new LibItem("GDUT");
            list.items[s].link ="http://222.200.98.171:81/"+bookBlock[s][0];
            list.items[s].bookName = bookBlock[s][1];
            list.items[s].author = bookBlock[s][2];
            list.items[s].publisher = bookBlock[s][3];
            list.items[s].pubDate = bookBlock[s][4];
-           //list.items[s].bookIndex = bookBlock[s][2];
         }
         messageCatcher(list,frameLocation);
 
@@ -1980,23 +1727,17 @@ filter: function (text, frameLocation) {
     //外语外贸大学
     GDUFS:{
      respond:function(reDetails,frameLocation,fullUrl) {
-              //fullurl=reDetails.finalUrl;
               if (reDetails.status !== 200&&reDetails.status !== 304){
                 var msg = new LibMeta("GDUFS");
 
                 msg.state = "error";
                 msg.errorMsg = "搜索连接错误";
                 messageCatcher(msg,frameLocation);
-                ///error_log = "搜索连接错误";
-                ///error_output(error_log,fullurl);
-                ///alert("全字段搜索连接错误");
                 return;
               }
 
 
                 if(reDetails.responseText.indexOf('Search Results')!=-1){
-                    //alert("跳转到搜索页");
-                    //titleFilter.SYSU.filter(frame.innerHTML,fullurl);
                     titleFilter.GDUFS.filter(reDetails.responseText,fullUrl,frameLocation);
                     return;
                 }
@@ -2004,21 +1745,14 @@ filter: function (text, frameLocation) {
                     var msg = new LibMeta("GDUFS");
                     msg.state = "error";
                     msg.errorMsg = "搜索页面跳转到了款目/轮排列表页面，<br>此页面无法获取图书详细信息。";
-                    ///error_log = "搜索页面跳转到了记录数页面，此页面无法获取图书详细信息。";
-                    ///error_output(error_log,fullurl);
+
                     messageCatcher(msg,frameLocation);
                     return;
                 }
-                else{
-
-                    //error_log = "搜索页面跳转到馆藏,<br>如果ISBN查询无结果，说明其跳转到了错误的图书。";
-                    //error_output(error_log,fullurl);
-                    
+                else{                    
                      isbnFilter.GDUFS.filter(reDetails.responseText,frameLocation);
                      return;
-                    //showisbn(frame.innerHTML,fullurl);
-                  //return;
-                  //alert("全字段跳转ISBN馆藏");//BUG处理,以后再说,基本检索
+
                   //
                 }
       },
@@ -2029,20 +1763,15 @@ filter: function (text, frameLocation) {
     str = str.replace(/[ | ]*\n/g,''); //去除行尾空白
     str = str.replace(/\n[\s| | ]*\r/g,''); //去除多余空行
     str = str.replace(/amp;/g,""); //去除URL转码
-    //alert(str);
-    //if(urltext.indexOf("ISB")){alert(str)};
+
     atxt= str.match(/col2>.*?<\/table>/g);
-    //alert(atxt.length);
-    //if(urltext.indexOf("ISB")){alert(atxt.length)};
+
     ///////获取图书馆书本元信息//////
     var bookDetail = new Array();//元信息数组
     atxt.shift();//去除整块信息中的多余信息
 
     for(s=0;s<atxt.length;s++){
-       // bookDetail[s] = atxt[s].match(/a[ ]href="(.*?)">(.*?)<\/a>.*?"top">(.*?)<\/td>.*?"top">(.*?)<\/td>.*?"top">(.*?)<\/td>.*?"top">(.*?)<\/td>.*?sub_library=(.*?)<\/table>/).slice(1);
-        // 超链接/ 书名 /作者 / 索引号/出版社 /年份 /藏书信息(由于有些书无馆藏，暂时不获取)
-        //if(!bookDetail[s]){ //如果没有馆藏信息
-            //alert(atxt[s]);
+
           bookDetail[s] = atxt[s].match(/a href=(.*?)>(.*?)<\/a>.*?top>(.*?)<td.*?top>(.*?)<tr>.*?top>(.*?)<td.*?top>(.*?)<tr>/).slice(1);
           // 超链接/ 书名 /作者 / 索引号/出版社 /年份 /
     }
@@ -2062,9 +1791,6 @@ filter: function (text, frameLocation) {
             else{
               display="";
             }
-
-                                                 
-           //allBook += bookStatus;
            list.items[s] = new LibItem("GDUFS");
            list.items[s].link = bookDetail[s][0];
            list.items[s].bookName = bookDetail[s][1];
@@ -2072,10 +1798,8 @@ filter: function (text, frameLocation) {
            list.items[s].publisher = bookDetail[s][4];
            list.items[s].pubDate = bookDetail[s][5];
 
-           //alert(list.items[s].bookName);
         }
-        //alert(allBook);
-        //allBook += '</div>' 
+
         messageCatcher(list,frameLocation);
         //判断URL
   
@@ -2094,39 +1818,30 @@ filter: function (text, frameLocation) {
           var msg = new LibMeta("GZHTCM");
           msg.state="error";
           msg.errorMsg="全字段连接错误";
-                //alert("ISBN连接错误");//后续版本再处理
           messageCatcher(msg,frameLocation);
           return;
           }
-              //document.getElementById("footer").textContent=reDetails.responseText;
           if(reDetails.responseText.indexOf('没有')!=-1){
                   //alert("ISBN查无此书"); //增加荐购
             var msg = new LibMeta("GZHTCM");
           msg.state="error";
           msg.errorMsg="全字段查无此书";
-                  //hasBook = false;
-                  //recommendBook();
             messageCatcher(msg,frameLocation);
             return;
           }
 
-          //document.getElementById("reviews").textContent=reDetails.responseText;
           titleFilter.GZHTCM.filter(reDetails.responseText,frameLocation);
 
       },
 
       filter:function(text,frameLocation){
-        //http://202.38.232.10/opac/servlet/opac.go?SORTFIELD=CALLNO&SORTORDER=asc&bookid=413213&cmdACT=query.bookdetail&libcode=
-        text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/ /g,"").replace(/\r/g,"");
-        rowText = text.match(/book_list_info.*?<img/);
-        //alert(rowText.length);
-        //document.getElementById("reviews").textContent=rowText;        
 
+        text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/ /g,"").replace(/\r/g,"");
+        rowText = text.match(/book_list_info.*?<img/g);
         var bookBlock = new Array();
         var bookDetail = new Array();
         for(s=0;s<rowText.length;s++){
           bookBlock[s] = rowText[s].match(/marc_no=(\d+\.?\d*)">(.*?)<\/a>(.*?)<\/h3>.*?span>(.*?)<br>(.*?)<\/span>(.*?)<br\/>(.*?)<br\/>/);
-          //alert(bookBlock[s].length);
           bookBlock[s].shift();
         }
 
@@ -2142,7 +1857,6 @@ filter: function (text, frameLocation) {
            list.items[s].author = bookBlock[s][5];
            list.items[s].publisher = bookBlock[s][6];
            list.items[s].bookIndex = bookBlock[s][2];
-           //alert(list.items[s].bookName);
         }
         messageCatcher(list,frameLocation);
 
@@ -2156,36 +1870,29 @@ respond: function (reDetails, frameLocation) {
     var msg = new LibMeta('GZHU');
     msg.state = 'error';
     msg.errorMsg = '全字段连接错误';
-    //alert("ISBN连接错误");//后续版本再处理
     messageCatcher(msg, frameLocation);
     return;
   }
-  //document.getElementById("footer").textContent=reDetails.responseText;
 
   if (reDetails.responseText.indexOf('找不到') != - 1) {
-    //alert("ISBN查无此书"); //增加荐购
     var msg = new LibMeta('GZHU');
     msg.state = 'error';
     msg.errorMsg = '全字段查无此书';
-    //hasBook = false;
-    //recommendBook();
+
     messageCatcher(msg, frameLocation);
     return;
   }
-  //document.getElementById("reviews").textContent=reDetails.responseText;
+
 
   titleFilter.GZHU.filter(reDetails.responseText, frameLocation);
 },
 filter: function (text, frameLocation) {
   text = text.replace(/[ | ]*\n/g, '').replace(/\n[\s| | ]*\r/g, '').replace(/amp;/g, '').replace(/ /g, '').replace(/\r/g, '');
   rowText = text.match(/book_info>.*?<\/div>/g);
-  //alert(rowText.length);
-  //document.getElementById("reviews").textContent=rowText[0];  
   var bookBlock = new Array();
   var bookDetail = new Array();
   for (s = 0; s < rowText.length; s++) {
     bookBlock[s] = rowText[s].match(/href="(.*?)"target="_blank">(.*?)<\/a><span>(.*?)<\/span>.*?<h4>(.*?)&nbsp;/);
-    //alert(bookBlock[s].length);
     bookBlock[s].shift();
   }
   var list = new LibMeta('GZHU'); ////构造函数
@@ -2197,8 +1904,7 @@ filter: function (text, frameLocation) {
     list.items[s].bookName = bookBlock[s][1];
     list.items[s].author = bookBlock[s][2];
     list.items[s].publisher = bookBlock[s][3];
-    //list.items[s].bookIndex = bookBlock[s][2];
-    //alert(list.items[s].bookName);
+
   }
   messageCatcher(list,frameLocation);
 
@@ -2218,53 +1924,38 @@ filter: function (text, frameLocation) {
           messageCatcher(msg,frameLocation);
           return;
           }
-              //document.getElementById("footer").textContent=reDetails.responseText;
           if(reDetails.responseText.indexOf('没有')!=-1){
-                  //alert("ISBN查无此书"); //增加荐购
+
             var msg = new LibMeta("GZARTS");
           msg.state="error";
           msg.errorMsg="全字段查无此书";
-                  //hasBook = false;
-                  //recommendBook();
+
             messageCatcher(msg,frameLocation);
             return;
           }
-
-          //document.getElementById("reviews").textContent=reDetails.responseText;
           titleFilter.GZARTS.filter(reDetails.responseText,frameLocation);
 
       },
       filter:function(text,frameLocation){
         text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/\r/g,"").replace(/ /g,"");
-        rowText = text.match(/class="tb".*?<\/table>/);
-        //alert(rowText.length);
-        //document.getElementById("reviews").textContent=rowText;        
-
+        rowText = text.match(/(bookinfo.aspx\?ctrlno=\d+\.?\d*)".*?blank">(.*?)<\/a>.*?<td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td>/g);
         var bookBlock = new Array();
-        //var bookDetail = new Array();
-        /*
         for(s=0;s<rowText.length;s++){
-          bookBlock[s] = rowText[s].match(/marc_no=(\d+\.?\d*)">(.*?)<\/a>(.*?)<\/h3>.*?span>(.*?)<br>(.*?)<\/span>(.*?)<br\/>(.*?)<br\/>/);
-          //alert(bookBlock[s].length);
-          bookBlock[s].shift();
+            bookBlock[s]=rowText[s].match(/(bookinfo.aspx\?ctrlno=\d+\.?\d*)".*?blank">(.*?)<\/a>.*?<td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td>/);
+            bookBlock[s].shift();
         }
-        */
-        bookBlock[0]=rowText[0].match(/(bookinfo.aspx\?ctrlno=\d+\.?\d*)".*?blank">(.*?)<\/a>.*?<td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td>/);
-        //alert(bookBlock[0].length);
 
         bookBlock[0].shift();
         var list = new LibMeta("GZARTS");////构造函数
         list.state="booklist";
         list.items= new Array();
-        for(s=0;s<rowText.length;s++){
+        for(s=0;s<bookBlock.length;s++){
            list.items[s] = new LibItem("GZARTS");
            list.items[s].link ="http://121.33.246.167/opac/"+bookBlock[s][0];
            list.items[s].bookName = bookBlock[s][1];
            list.items[s].author = bookBlock[s][2];
            list.items[s].publisher = bookBlock[s][3];
            list.items[s].pubDate = bookBlock[s][4];
-           //list.items[s].bookIndex = bookBlock[s][2];
-           //alert(list.items[s].link);
         }
         messageCatcher(list,frameLocation);
 
@@ -2283,60 +1974,167 @@ filter: function (text, frameLocation) {
           messageCatcher(msg,frameLocation);
           return;
           }
-              //document.getElementById("footer").textContent=reDetails.responseText;
           if(reDetails.responseText.indexOf('没有')!=-1){
-                  //alert("ISBN查无此书"); //增加荐购
+
             var msg = new LibMeta("XHCOM");
           msg.state="error";
           msg.errorMsg="全字段查无此书";
-                  //hasBook = false;
-                  //recommendBook();
+
             messageCatcher(msg,frameLocation);
             return;
           }
 
-          //document.getElementById("reviews").textContent=reDetails.responseText;
           titleFilter.XHCOM.filter(reDetails.responseText,frameLocation);
 
       },
       filter:function(text,frameLocation){
         text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/\r/g,"").replace(/ /g,"");
-        rowText = text.match(/class="tb".*?<\/table>/);
-        //alert(rowText.length);
-        //document.getElementById("reviews").textContent=rowText;        
+        var rowText=text.match(/(bookinfo.aspx\?ctrlno=\d+\.?\d*)".*?blank">(.*?)<\/a>.*?<td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td>/g)     
 
         var bookBlock = new Array();
-        //var bookDetail = new Array();
-        /*
-        for(s=0;s<rowText.length;s++){
-          bookBlock[s] = rowText[s].match(/marc_no=(\d+\.?\d*)">(.*?)<\/a>(.*?)<\/h3>.*?span>(.*?)<br>(.*?)<\/span>(.*?)<br\/>(.*?)<br\/>/);
-          //alert(bookBlock[s].length);
-          bookBlock[s].shift();
-        }
-        */
-        bookBlock[0]=rowText[0].match(/(bookinfo.aspx\?ctrlno=\d+\.?\d*)".*?blank">(.*?)<\/a>.*?<td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td>/);
-        //alert(bookBlock[0].length);
 
-        bookBlock[0].shift();
+        for(s=0;s<rowText.length;s++){
+            bookBlock[s]=rowText[s].match(/(bookinfo.aspx\?ctrlno=\d+\.?\d*)".*?blank">(.*?)<\/a>.*?<td>(.*?)<\/td><td>(.*?)<\/td><td>(.*?)<\/td>/);
+            bookBlock[s].shift();
+        }
+
         var list = new LibMeta("XHCOM");////构造函数
         list.state="booklist";
         list.items= new Array();
-        for(s=0;s<rowText.length;s++){
+        for(s=0;s<bookBlock.length;s++){
            list.items[s] = new LibItem("XHCOM");
            list.items[s].link ="http://121.33.246.167/opac/"+bookBlock[s][0];
            list.items[s].bookName = bookBlock[s][1];
            list.items[s].author = bookBlock[s][2];
            list.items[s].publisher = bookBlock[s][3];
            list.items[s].pubDate = bookBlock[s][4];
-           //list.items[s].bookIndex = bookBlock[s][2];
-           //alert(list.items[s].link);
         }
         messageCatcher(list,frameLocation);
 
       }
     },
 
+        //超星发现全字段
+    zhizhen:{
+      respond:function (reDetails,frameLocation) {
+        if (reDetails.status !== 200&&reDetails.status !== 304){
+          var msg = new LibMeta("zhizhen");
+          msg.state="error";
+          msg.errorMsg="超星发现全字段连接错误";
+                //alert("ISBN连接错误");
+          messageCatcher(msg,frameLocation);
+          return;
+          }
+        
+          if(reDetails.responseText.indexOf('没有找到')!=-1){
+            var msg = new LibMeta("zhizhen");
+          msg.state="error";
+          msg.errorMsg="超星发现全字段查无此书";
+
+            messageCatcher(msg,frameLocation);
+            return;
+          }
+
+          titleFilter.zhizhen.filter(reDetails.responseText,frameLocation);
+
+      },
+      filter:function(text,frameLocation){
+        text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/\r/g,"");
+        var rowText = text.match(/savelist.*?form/g);
+        var bookBlock = new Array();
+
+        for(s=0;s<rowText.length;s++){
+            bookBlock[s]=rowText[s].match(/[图书].*?href="(.*?)" target="_blank">(.*?)<\/a>.*?作者：(.*?)<\/li>.*?出处：(.*?)&nbsp;/);
+            if(bookBlock[s]==null){
+                bookBlock[s]=bookBlock[s-1];
+                continue;
+            } 
+            bookBlock[s].shift();
+            //链接|书名|作者|出处
+            getInfo = rowText[s].match(/获得途径：<\/span>(.*?)<\/li>/);
+            if(getInfo){
+                getInfo[1] = getInfo[1].replace(/href="/g,'href="http://ss.zhizhen.com').replace(/href=\//g,'href=http://ss.zhizhen.com/');
+                bookBlock[s][4] = getInfo[1];
+                //
+            }
+            else{
+                bookBlock[s][4]="无获取途径";
+            }
+
+
+        }
+
+        var list = new LibMeta("zhizhen");////构造函数
+        list.state="zhizhen";
+        list.items= new Array();
+        for(s=0;s<rowText.length;s++){
+           list.items[s] = new LibItem("zhizhen");
+           list.items[s].link ="http://ss.zhizhen.com/"+bookBlock[s][0];
+           list.items[s].bookName = bookBlock[s][1];
+           list.items[s].author = bookBlock[s][2];
+           list.items[s].publisher = bookBlock[s][3];
+           list.items[s].extra = bookBlock[s][4];
+        }
+        messageCatcher(list,frameLocation);
+
+      }
+    },
+
+            //超星读书全字段
+    chaoxing:{
+      respond:function (reDetails,frameLocation) {
+        if (reDetails.status !== 200&&reDetails.status !== 304){
+          var msg = new LibMeta("chaoxing");
+          msg.state="error";
+          msg.errorMsg="超星读书全字段连接错误";
+                //alert("ISBN连接错误");
+          messageCatcher(msg,frameLocation);
+          return;
+          }
+        
+        //document.getElementById("footer").textContent=reDetails.responseText;
+          if(reDetails.responseText.indexOf('没有找到')!=-1){
+            var msg = new LibMeta("chaoxing");
+          msg.state="error";
+          msg.errorMsg="超星读书题名查无此书";
+            messageCatcher(msg,frameLocation);
+            return;
+          }
+
+          titleFilter.chaoxing.filter(reDetails.responseText,frameLocation);
+
+      },
+      filter:function(text,frameLocation){
+        text = text.replace(/[ | ]*\n/g,'').replace(/\n[\s| | ]*\r/g,'').replace(/amp;/g,"").replace(/\r/g,"");
+        var rowText = text.match(/pic_upost.*?name.*?<\/p>/g);
+  
+        var bookBlock = new Array();
+
+        for(s=0;s<rowText.length;s++){
+            bookBlock[s]=rowText[s].match(/title="(.*?)".*?href="(.*?)".*?class="name".*?<span>(.*?)<\/span>/);
+            bookBlock[s].shift();
+            //|书名|链接|作者
+        }
+        var list = new LibMeta("chaoxing");////构造函数
+        list.state="chaoxing";
+        list.items= new Array();
+        for(s=0;s<rowText.length;s++){
+           list.items[s] = new LibItem("chaoxing");
+           list.items[s].bookName = bookBlock[s][0];
+           list.items[s].link ="http://book.chaoxing.com"+bookBlock[s][1];
+           list.items[s].author = bookBlock[s][2];
+        }
+        messageCatcher(list,frameLocation);
+      }
+    },
+
     //广东药学院,由于编码问题和没提供ISBN检索，暂不支持//
+    GDPU:{
+        respond:function (reDetails,frameLocation) {
+        },
+        filter:function(text,frameLocation){            
+        }
+    }
 }
 
 
@@ -2345,15 +2143,18 @@ filter: function (text, frameLocation) {
 libRecommend = {
   SYSU: function () {
     if (document.getElementsByName("Z13_TITLE")&&GM_getValue('doubanTitle')) {
-      $('[name="Z13_TITLE"]').val(GM_getValue('doubanTitle', 'bookMeta.title'));
-      $('[name="Z13_AUTHOR"]').val(GM_getValue('doubanAuthor', 'bookMeta.author'));
-      $('[name="Z13_IMPRINT"]').val(GM_getValue('doubanPublisher', 'bookMeta.publisher'));
-      $('[name="Z13_YEAR"]').val(GM_getValue('doubanPubdate', 'bookMeta.pubdate'));
-      $('[name="Z13_ISBN_ISSN"]').val(GM_getValue('doubanIsbn', 'bookMeta.isbn'));
-      $('[name="Z13_PRICE"]').val(GM_getValue('doubanPrice', 'bookMeta.price'));
-      $('[name="Z68_NO_UNITS"]').val(2);
-      $('[name="Z303_REC_KEY"]').val(prefs.libraryId);
-      $('[name="Z46_REQUEST_PAGES"]').val('豆瓣读书得分: ' + GM_getValue('doubanRating', 'bookMeta.rating'));
+
+      document.getElementsByName("Z13_TITLE")[0].value=GM_getValue('doubanTitle', 'bookMeta.title');
+      document.getElementsByName("Z13_AUTHOR")[0].value=GM_getValue('doubanAuthor', 'bookMeta.author');
+      document.getElementsByName("Z13_IMPRINT")[0].value=GM_getValue('doubanPublisher', 'bookMeta.publisher');
+      document.getElementsByName("Z13_YEAR")[0].value=GM_getValue('doubanPubdate', 'bookMeta.pubdate');
+      document.getElementsByName("Z13_ISBN_ISSN")[0].value=GM_getValue('doubanIsbn', 'bookMeta.isbn');
+      document.getElementsByName("Z13_PRICE")[0].value=GM_getValue('doubanPrice', 'bookMeta.price');
+      document.getElementsByName("Z68_NO_UNITS")[0].value=2;
+      document.getElementsByName("Z303_REC_KEY")[0].value=prefs.libraryId;
+      document.getElementsByName("Z46_REQUEST_PAGES")[0].value='豆瓣读书得分: ' + GM_getValue('doubanRating', 'bookMeta.rating');
+      if(GM_getValue('doubanLanguage','zh')=="en") document.getElementsByName("LIBRARY")[0].value="02";//语言为外语时
+      
       GM_deleteValue('doubanTitle');
       GM_deleteValue('doubanAuthor');
       GM_deleteValue('doubanPublisher');
@@ -2388,6 +2189,27 @@ libRecommend = {
     GM_deleteValue('doubanRating');
   },
   GDUFS: function () {
+    if (document.getElementsByName("Z13_TITLE")&&GM_getValue('doubanTitle')) {
+
+      document.getElementsByName("Z13_TITLE")[0].value=GM_getValue('doubanTitle', 'bookMeta.title');
+      document.getElementsByName("Z13_AUTHOR")[0].value=GM_getValue('doubanAuthor', 'bookMeta.author');
+      document.getElementsByName("Z13_IMPRINT")[0].value=GM_getValue('doubanPublisher', 'bookMeta.publisher');
+      document.getElementsByName("Z13_YEAR")[0].value=GM_getValue('doubanPubdate', 'bookMeta.pubdate');
+      document.getElementsByName("Z13_ISBN_ISSN")[0].value=GM_getValue('doubanIsbn', 'bookMeta.isbn');
+      document.getElementsByName("Z13_PRICE")[0].value=GM_getValue('doubanPrice', 'bookMeta.price');
+      document.getElementsByName("Z68_NO_UNITS")[0].value=2;
+      document.getElementsByName("Z303_REC_KEY")[0].value=prefs.libraryId;
+      document.getElementsByName("Z46_REQUEST_PAGES")[0].value='豆瓣读书得分: ' + GM_getValue('doubanRating', 'bookMeta.rating');
+      if(GM_getValue('doubanLanguage','zh')=="en") document.getElementsByName("LIBRARY")[0].value="02";//语言为外语时
+      GM_deleteValue('doubanTitle');
+      GM_deleteValue('doubanAuthor');
+      GM_deleteValue('doubanPublisher');
+      GM_deleteValue('doubanPubdate');
+      GM_deleteValue('doubanIsbn');
+      GM_deleteValue('doubanPrice');
+      GM_deleteValue('doubanRating');
+      GM_deleteValue('doubanLanguage');
+    }
   }
 }
 ///////////////////图书馆荐购页面结束//////////////////
@@ -2397,23 +2219,36 @@ libRecommend = {
 
 ///////////////////框架//////////////////
 titleFrame=function(){
+
+    function showOtherFrame(){
+
+      document.getElementById("libTitle").style.display="none";
+      document.getElementById("otherTitle").style.display="block";
+      defineClass=this.getAttribute("data-ready");
+      this.setAttribute("class","blue");
+      document.getElementById("clickTitle").setAttribute("class","");
+      if(!defineClass){
+        this.setAttribute("data-ready","already");
+        otherTitle();
+      }
+    }
+    function showOriginFrame(){
+      document.getElementById("libTitle").style.display="block";
+      document.getElementById("otherTitle").style.display="none";
+      this.setAttribute("class","blue");
+      document.getElementById("clickOtherTitle").setAttribute("class","");
+  }
     var frame = document.createElement("div");
 
-    frame.innerHTML=    /*'<ul class="tabmenu">'+
-        '<li id="clickISBN"><a>'+schoolInfo[prefs.school].abbrName+'</a></li>'+
-        '<li id="clickOtherISBN"><a>其他图书馆</a></li>'+
-        '</ul>'+*/
+    frame.innerHTML='<ul class="tabmenu">'+
+        '<li id="clickTitle" class="blue"><a>'+schoolInfo[prefs.school].abbrName+'</a></li>'+
+        '<li id="clickOtherTitle"><a>超星</a></li>'+
+        '</ul>'+
         '<div id="libTitle" class="tab_content libBottom">'+'<h2>'+schoolInfo[prefs.school].abbrName+'图书馆全字段检索</h2>'+'</div>'+
-        '<div id="otherTitle" class="tab_content libBottom" style="display:none"><p>本Tab为测试使用</div>';//+
-        //'</div>';
-    //frame.innerHTML='<h2>'+schoolInfo[prefs.school].abbrName+'图书馆ISBN检索</h2>';
-    //frame.setAttribute("class","gray_ad");
-    frame.setAttribute("class","tablist");
-/*
-    frame.innerHTML='<h2>'+schoolInfo[prefs.school].abbrName+'图书馆全字段检索</h2>';
-    frame.setAttribute("class","gray_ad");
-    frame.setAttribute("id","libTitle");
-*/
+        '<div id="otherTitle" class="tab_content libBottom" style="display:none"><div id="mainOtherTitle"></div><div id="errorOtherTitle"></div></div>';
+
+    frame.setAttribute("class","tablist title_div");
+
     if(location.href.indexOf("ebook")!=-1){
         var aside=document.getElementsByTagName("aside")[0];
     }
@@ -2422,6 +2257,10 @@ titleFrame=function(){
     }
 
     aside.insertBefore(frame,aside.firstChild.nextSibling);
+        clickOther=document.getElementById("clickOtherTitle");
+    clickOther.addEventListener("click",showOtherFrame,false);
+    clickOther=document.getElementById("clickTitle");
+    clickOther.addEventListener("click",showOriginFrame,false);
 }
 ISBNFrame=function(){
 
@@ -2437,9 +2276,6 @@ ISBNFrame=function(){
         this.setAttribute("data-ready","already");
         otherISBN();
       }
-
-
-
     }
 
 
@@ -2453,19 +2289,19 @@ ISBNFrame=function(){
     var frame = document.createElement("div");
 
 
-    //'<div class="tablist">'+
+    var NLCfinalUrl = schoolInfo.NLC.isbnSearchUrl.replace(/%s/,bookMeta.isbn10);
+    var CALISfinalUrl = schoolInfo.CALIS.isbnSearchUrl.replace(/%s/,bookMeta.isbn10);
     frame.innerHTML=    '<ul class="tabmenu">'+
         '<li id="clickISBN" class="blue"><a>'+schoolInfo[prefs.school].abbrName+'</a></li>'+
         '<li id="clickOtherISBN"><a>其他图书馆</a></li>'+
         '<li id="settingPop"><a>设置</a></li>'+
         '</ul>'+
         '<div id="libISBN" class="tab_content libTop">'+'<h2>'+schoolInfo[prefs.school].abbrName+'图书馆ISBN检索</h2>'+'</div>'+
-        '<div id="otherISBN" class="tab_content libTop" style="display:none"><div id="mainOtherISBN"></div><div id="errorOtherISBN"></div></div>';//+
-        //'</div>';
-    //frame.innerHTML='<h2>'+schoolInfo[prefs.school].abbrName+'图书馆ISBN检索</h2>';
-    //frame.setAttribute("class","gray_ad");
+        '<div id="otherISBN" class="tab_content libTop" style="display:none"><div id="mainOtherISBN">'+
+        '<a target="_blank" class="gotobtn" href="'+CALISfinalUrl+'">前往CALIS</a>'+' &nbsp;'+'<a class="gotobtn" target="_blank" href="'+NLCfinalUrl+'">前往国家图书馆</a>'+
+        '</div><div id="errorOtherISBN"></div></div>';//+
+
     frame.setAttribute("class","tablist");
-    //frame.setAttribute("id","libISBN");
     if(location.href.indexOf("ebook")!=-1){
         var aside=document.getElementsByTagName("aside")[0];
     }
@@ -2483,7 +2319,7 @@ ISBNFrame=function(){
 }
 
 
-//////////////////////其它图书馆//////////////////////////////////
+//////////////////////其它图书馆ISBN//////////////////////////////////
 
 function otherISBN(){
     for(var key in schoolList){
@@ -2492,6 +2328,36 @@ function otherISBN(){
         mineISBN(schoolList[key],"otherISBN");
       }
     }
+}
+
+//////////////////////超星其它//////////////////////////////////
+
+function otherTitle(){
+//////////////////////////超星发现和超星读书
+    if(bookMeta.isbn){
+        var fullUrl=schoolInfo.zhizhen.anySearchUrl.replace(/%s/,bookMeta.title);
+        var fullUrl2=schoolInfo.chaoxing.anySearchUrl.replace(/%s/,bookMeta.title);
+        }
+    else{
+        return; 
+    }
+    GM_xmlhttpRequest({ //获取列表
+        method : 'GET',
+        synchronous : false,//异步获取
+        url : fullUrl,
+        onload :function (reDetails){             
+        titleFilter.zhizhen.respond(reDetails,"otherTitle",fullUrl);
+        }
+    });
+
+    GM_xmlhttpRequest({ //获取列表
+        method : 'GET',
+        synchronous : false,//异步获取
+        url : fullUrl2,
+        onload :function (reDetails){             
+        titleFilter.chaoxing.respond(reDetails,"otherTitle",fullUrl2);
+        }
+    });
 }
 //////////////ISBN搜索xml获取//////////////////
 mineISBN = function(school,frameLocation){
@@ -2512,13 +2378,13 @@ mineISBN = function(school,frameLocation){
           case "GZARTS":
           case "XHCOM":
             fullUrl =schoolInfo[school].isbnSearchUrl.replace(/%s/,bookMeta.isbn10);
-            //alert(fullurl);
             break;
           case "SYSU":
           case "GDUFS":
 
             if(bookMeta.isbn&&bookMeta.title.charCodeAt(0)<=122&&bookMeta.isbn[3]!=="7"){
              fullUrl=schoolInfo[school].isbnForeianSearchUrl.replace(/%s/,bookMeta.isbn);  
+             GM_setValue("doubanLanguage","en");
             }
             else{
               fullUrl=schoolInfo[school].isbnSearchUrl.replace(/%s/,bookMeta.isbn);        
@@ -2528,16 +2394,13 @@ mineISBN = function(school,frameLocation){
             break;
         }
         if(frameLocation=="ISBN"){
-          //ISBNFrame();
           insertLoading(fullUrl);
         }
         frame = document.getElementById("libISBN");  //此处frame需要删除    
-        //alert(fullUrl);
 
         GM_xmlhttpRequest({ //获取列表
             method : 'GET',
            synchronous : false,//异步获取
-            //url : "http://202.116.64.108:8991/F/?func=find-b&find_code=ISB&request=9787805985824",
             url : fullUrl,
             onload :function (reDetails){
          
@@ -2581,6 +2444,7 @@ mineTitle = function(school){
     titleFrame();
         if(bookMeta.isbn&&bookMeta.title.charCodeAt(0)<=122&&bookMeta.isbn[3]!=="7"){
              var fullUrl=schoolInfo[school].anyForeianSearchUrl.replace(/%s/,bookMeta.title);
+             GM_setValue("doubanLanguage","en");
         }
         else{
              var fullUrl=schoolInfo[school].anySearchUrl.replace(/%s/,bookMeta.title);           
@@ -2597,16 +2461,12 @@ mineTitle = function(school){
               frameLink.setAttribute("href",fullUrl);
               frame.appendChild(frameLink);
               frame.appendChild(loadingFrame);
-                //alert(fullUrl);
-        //alert(schoolInfo[school].isGBK);
         if(!schoolInfo[school].isGBK){
           GM_xmlhttpRequest({ //获取列表
             method : 'GET',
            synchronous : false,//异步获取
-            //url : "http://202.116.64.108:8991/F/?func=find-b&find_code=ISB&request=9787805985824",
             url : fullUrl,
             onload :function (reDetails){
-              //var innerContent=document.createElement("div");
               
               titleFilter[school].respond(reDetails,"title",fullUrl);
             }
@@ -2637,10 +2497,8 @@ mineTitle = function(school){
                 GM_xmlhttpRequest({ //获取列表
                 method : 'GET',
                 synchronous : false,//异步获取
-                //url : "http://202.116.64.108:8991/F/?func=find-b&find_code=ISB&request=9787805985824",
                 url : fullUrl,
                 onload :function (reDetails){
-                  //var innerContent=document.createElement("div");
                   titleFilter[school].respond(reDetails,"title",fullUrl);
             }
           });
@@ -2649,12 +2507,8 @@ mineTitle = function(school){
 
         }
 
-
 }
 /////////////////////////////////////////
-
-
-
 
 ///////////////ISBN插入框架//////////////////////////////
 ISBNInsert=function(msg,frameLocation){
@@ -2713,7 +2567,6 @@ ISBNInsert=function(msg,frameLocation){
       }
     });
   }
-  // At last, if the user already denied any notification
   else{
     confirm("以下信息已复制到粘贴板\n\n"+this.getAttribute("data-storeInfo"));
   }
@@ -2739,12 +2592,17 @@ titleInsert=function(msg,frameLocation){
             break;
         case "title":
             GM_addStyle("#libTitle { max-height: 300px;overflow: auto; }");
-            loading =document.getElementById("titleLoading");
-            loading.parentNode.removeChild(loading);
+            if(loading =document.getElementById("titleLoading")){
+                loading.parentNode.removeChild(loading);
+            }
+            
             frame = document.getElementById("libTitle");
             break;
         case "otherISBN":
             frame = document.getElementById("mainOtherISBN");
+            break;
+        case "otherTitle":
+            frame = document.getElementById("mainOtherTitle");
             break;
         default:
             break;
@@ -2756,7 +2614,9 @@ titleInsert=function(msg,frameLocation){
 ///////////////Title插入框架//////////////////////////////
 errorInsert=function(msg,frameLocation,school){
     var innerContent=document.createElement("div");
+
     innerContent.innerHTML= msg;
+    
     switch(frameLocation){
         case "ISBN":
             if(loading =document.getElementById("ISBNLoading")){
@@ -2767,8 +2627,10 @@ errorInsert=function(msg,frameLocation,school){
             frame = document.getElementById("libISBN");
             break;
         case "title":
-            loading =document.getElementById("titleLoading");
-            loading.parentNode.removeChild(loading);
+            if(loading =document.getElementById("titleLoading")){
+                loading.parentNode.removeChild(loading);
+            };
+            
             frame = document.getElementById("libTitle");
             break;
         case "otherISBN":
@@ -2776,12 +2638,15 @@ errorInsert=function(msg,frameLocation,school){
             if(!frame.textContent){
                 frame.innerHTML+="以下院校查无此书: "
             }
-            frame.innerHTML+=school+"&nbsp|&nbsp";           
+            frame.innerHTML+=school+"&nbsp|&nbsp"; 
+            break;
+        case "otherTitle":
+            frame = document.getElementById("errorOtherTitle"); 
+            break;
         default:
             return;
     }
-    
-    frame.appendChild(innerContent);
+    if(frameLocation!="otherISBN") frame.appendChild(innerContent);
 }
 
 
@@ -2813,9 +2678,6 @@ recommendBook = function(frameLocation,school){
     
     
   function gotoRecommend(){
-      //var bookMeta = helper.book.meta();
-      //alert(bookMeta.bookIndex);
-
       GM_setValue('doubanTitle',bookMeta.title);
       GM_setValue('doubanAuthor',bookMeta.author);
       GM_setValue('doubanPublisher',bookMeta.publisher);
@@ -2857,7 +2719,6 @@ recommendBook = function(frameLocation,school){
 
 ///////获取回调数据//////////////
 messageCatcher=function(msg,frameLocation){
-  //alert(msg.school);
   switch(msg.state){
     case "store":
         var allBook="";
@@ -2880,18 +2741,16 @@ messageCatcher=function(msg,frameLocation){
             if(msg.items[s].bookIndex) storeInfo+="索书号:"+msg.items[s].bookIndex+" ";            
             if(msg.items[s].branch) storeInfo+="分馆:"+msg.items[s].branch+" ";
             if(msg.items[s].location) storeInfo+="馆藏地:"+msg.items[s].location;
-            //alert(storeInfo);       
            bookStatus =   '<ul class="preStoreRegister storelist ft pl more-after'+attachRent+'" data-storeInfo="'+storeInfo+'" '+'title="双击可粘贴馆藏信息到剪贴板"'+'> ' +//+'ondblclick="GM_setClipboard(this.getAttribute('+"'data-storeInfo'"+'))"'
                           '<li style="border: none"><a href="'+msg.items[s].link+'" target="_blank">'+otherAbbr+'状态:' + msg.items[s].storeState+
                           '<span style="position:relative; ">  应还日期: ' + msg.items[s].returnTime +'</span></a></li>' + 
-                          //'<li style="border: none">到期: ' + loan[s][3] + '</li>' +
+
                           '<li style="border: none">分馆: ' + msg.items[s].branch + '</li>' +
                           '</ul>';                        
            allBook += bookStatus;
 
-           //alert(allBook);      
         }
-        //alert(allBook);
+
         ISBNInsert(allBook,frameLocation);
         break;
     case "booklist":
@@ -2913,27 +2772,65 @@ messageCatcher=function(msg,frameLocation){
             '<li style="border: none"><a href="'+msg.items[s].link+'"target="_blank">'+otherAbbr+'书名:' + msg.items[s].bookName+ '</a></li>' +
                           '<li style="overflow:hidden;border: none;'+display+'">作者: ' + msg.items[s].author  + 
                           '  出版社:' + msg.items[s].publisher + '</li>' +
-                          //'<li style="border: none'+display+'"><a >出版社: ' + bookDetail[s][4] + '</a></li>' +
-                          //'<li style="border: none'+display+'"><a >年份: ' + bookDetail[s][5] + '</a></li>' +
                           '</ul>';
                                                  
            allBook += bookStatus;
         }
-        //return allBook;
+
         titleInsert(allBook,frameLocation);
         break;
     case "recommend":
-      //alert("recommend");
+
       recommendBook(frameLocation,msg.school);
       break;
     case "error":
         var bookStatus = '<ul class="ft pl more-after"> ' +
                      '<li style="border: none">' + msg.errorMsg+'</li>' +
                      '</ul>';
-        //return bookStatus;
-        //alert(msg.errorMsg);
-        //alert(frameLocation);
+
         errorInsert(bookStatus,frameLocation,schoolInfo[msg.school].abbrName);
+        break;
+    case "zhizhen"://超星发现
+        var display;
+        var allBook = "";
+        var otherAbbr="";
+        otherAbbr=schoolInfo[msg.items[0].school].abbrName+" ";
+        for(s=0;s<msg.items.length;s++){
+            if(s>4){
+              display="display : none;";
+            }
+            else{
+              display="";
+            }
+           bookStatus =   '<ul class="ft pl more-after"> ' +
+            '<li style="border: none">'+otherAbbr+'书名:'+'<a href="'+msg.items[s].link+'"target="_blank">' + msg.items[s].bookName+ '</a></li>' +
+                          '<li><span style="overflow:hidden;border: none;'+display+'">作者: ' + msg.items[s].author  + 
+                          '  出版社:' + msg.items[s].publisher + '</span></li>'+
+                          '<li><span class="getlink">获取途径:'+msg.items[s].extra+'</span></li>' +
+                          '</ul>';               
+           allBook += bookStatus;
+        }
+        titleInsert(allBook,frameLocation);
+        break;
+    case "chaoxing"://超星读书
+        var display;
+        var allBook = "";
+        var otherAbbr="";
+        otherAbbr=schoolInfo[msg.items[0].school].abbrName+" ";
+        for(s=0;s<msg.items.length;s++){
+            if(s>4){
+              display="display : none;";
+            }
+            else{
+              display="";
+            }
+           bookStatus =   '<ul class="ft pl more-after"> ' +
+            '<li style="border: none">'+otherAbbr+'书名:'+'<a href="'+msg.items[s].link+'"target="_blank">' + msg.items[s].bookName+ '</a></li>' +
+            '<li><span style="overflow:hidden;border: none;'+display+'">作者: ' + msg.items[s].author  + '</span></li>' +                      
+            '</ul>';               
+           allBook += bookStatus;
+        }
+        titleInsert(allBook,frameLocation);
         break;
     default:
       alert("defalut");
@@ -2942,9 +2839,6 @@ messageCatcher=function(msg,frameLocation){
 
 }
 /////////////////////////////////
-
-
-
 
 //////////////////图书馆荐购页面Main//////////////////////////////////////
 
@@ -2971,19 +2865,12 @@ libMain = function(){
 
   }
   
-  //alert(GM_getValue('doubanTitle'));
-
 }
 ///////////////////图书馆荐购页面结束//////////////////
 
 
 
 GM_addStyle('.recbtn{display: inline-block; background: #33A057;border: 1px solid #2F7B4B; color: white; padding: 1px 10px; border-radius: 3px; margin-right: 8px;cursor:pointer} ')
-
-
-
-
-
 GM_registerMenuCommand("图书馆检索设置", popSetting);
 //////////////主函数//////////////////////////
 
@@ -2995,7 +2882,8 @@ if(location.href.indexOf('douban')!=-1){
   ".tabmenu li{display:inline-block;}"+
   ".tabmenu li a {display:block;padding:5px 10px;margin:0 10px 0 0;border:1px solid #91a7b4;border-radius:5px 5px 0 0;background:#F6F6F1;color:#333;text-decoration:none;}#libISBN div ul,#libTitle div ul,#otherISBN div ul,#otherTitle div ul{border-bottom: 1px dashed #ddd;}#errorOtherISBN{font-size:10px}.blue a{background:#37A !important;color:white !important;}.tab_content h2{color:#007722; font:15px/150% Arial,Helvetica,sans-serif;margin: 0 0 12px;}"+
 ".libTop{margin-top:30px;}#clickISBN a,#clickOtherISBN a,#settingPop a{cursor:pointer;}#settingPop{position:relative;float:right;}"+
-".rentable{background:#E3F1ED!important;}.ft.pl.rentable li a{color:#4f946e;}.ft.pl.rentable li a:hover{background:#007711;color:#FFFFFF;}");
+".rentable{background:#E3F1ED!important;}.ft.pl.rentable li a{color:#4f946e;}.ft.pl.rentable li a:hover{background:#007711;color:#FFFFFF;}"+
+".title_div{margin-top: 35px;}");
   mineISBN(prefs.school,"ISBN");
   mineTitle(prefs.school);
 
@@ -3007,13 +2895,14 @@ if(location.href.indexOf('douban')!=-1){
 }
 
 
-
 if(location.href.indexOf('http://202.116.64.108:8080/apsm/recommend/recommend.jsp')!=-1){
   libRecommend.SYSU();//中山大学图书馆荐购页面
 }
-
 if(location.href.indexOf('http://202.38.232.10/opac/servlet/opac.go?cmdACT=recommend.form')!=-1){
   libRecommend.SCUT();//华南理工大学图书馆荐购页面
+}
+if(location.href.indexOf('http://opac.gdufs.edu.cn:8118/apsm/recommend/recommend_nobor.jsp')!=-1){
+  libRecommend.SYSU();//广东外语外贸大学图书馆荐购页面
 }
 
 if(location.href.indexOf('gdtgw.cn')!=-1){//十校互借页面
@@ -3128,7 +3017,6 @@ if(location.href.indexOf('gdufs.edu.cn')!=-1&&prefs.school!="GDUFS"){//广外
     }
 
     for (var s = 1; s < rentTable.rows.length; s++) {
-         //let bookIndex=rentTable.rows[s].cells[5].textContent;
          var recbtn=document.createElement("a");
          recbtn.setAttribute("class","recbtn");
          recbtn.innerHTML="十校互借";
@@ -3152,7 +3040,6 @@ if(location.href.indexOf('202.116.64.108:8991')!=-1&&prefs.school!="SYSU"){//中
     }
 
     for (var s = 1; s < rentTable.rows.length; s++) {
-         //let bookIndex=rentTable.rows[s].cells[5].textContent;
          var recbtn=document.createElement("a");
          recbtn.setAttribute("class","recbtn");
          recbtn.innerHTML="十校互借";
@@ -3165,7 +3052,7 @@ if(location.href.indexOf('202.116.64.108:8991')!=-1&&prefs.school!="SYSU"){//中
 if(location.href.indexOf('http://202.38.232.10/opac/servlet/opac.go')!=-1&&prefs.school!="SCUT"){//华理工
     var rentTable=document.getElementById("queryholding");
     if(!rentTable){
-        //alert("test");
+
         return null;
     }
 
@@ -3181,8 +3068,7 @@ if(location.href.indexOf('http://202.38.232.10/opac/servlet/opac.go')!=-1&&prefs
         pubDate = publisher.match(/\d+/);
         publisher = publisher.slice(0,publisher.indexOf(pubDate)-2);
         author = infoTable.rows[1].cells[1].getElementsByTagName("a")[0].innerHTML;
-        //alert(author+publisher+pubDate+ISBN);
-        //alert(ISBN);
+
         GM_setValue("bookIndex",bookIndex);
         GM_setValue("rentSchool","scut");
         GM_setValue("gotoRent",true);
@@ -3194,9 +3080,8 @@ if(location.href.indexOf('http://202.38.232.10/opac/servlet/opac.go')!=-1&&prefs
         GM_openInTab("http://www.gdtgw.cn:8080/#.html");
     }
     rentTable=rentTable.rows[0].cells[0].getElementsByTagName("table")[0];
-    //alert(rentTable.textContent);
     for (var s = 1; s < rentTable.rows.length; s++) {
-         //let bookIndex=rentTable.rows[s].cells[5].textContent;
+
          var recbtn=document.createElement("a");
          recbtn.setAttribute("class","recbtn");
          recbtn.innerHTML="十校互借";
@@ -3210,12 +3095,11 @@ if(location.href.indexOf('lib.gzhu.edu.cn:8080/bookle/search2/detail')!=-1&&pref
     var rentTable=document.getElementsByClassName("book_holding")[0];
 
     function GZHU_interLending(){
-
         var infoTable=document.getElementsByClassName("book_detail")[0];
-        //alert(infoTable.textContent);
 
         var bookIndex=infoTable.rows[5].cells[1].textContent;
         var publisher = infoTable.rows[0].cells[1].textContent;
+
         var pubDate = publisher.match(/\d+/);
 
         publisher=publisher.slice(0,publisher.indexOf(pubDate)-1);
@@ -3226,16 +3110,16 @@ if(location.href.indexOf('lib.gzhu.edu.cn:8080/bookle/search2/detail')!=-1&&pref
         GM_setValue("doubanPubdate",pubDate);
         GM_setValue("doubanPublisher",publisher);
         GM_setValue("doubanAuthor",author);
-        GM_setValue("bookIndex",bookIndex);
+        //GM_setValue("bookIndex",bookIndex);
         GM_setValue("rentSchool","gzhu");
         GM_setValue("gotoRent",true);
         GM_setValue("doubanTitle",title);
+        //GM_setValue("doubanIsbn",bookisbn);
         GM_openInTab("http://www.gdtgw.cn:8080/#.html");
     }
 
-    //alert(rentTable.textContent);
     for (var s = 1; s < rentTable.rows.length; s++) {
-         //let bookIndex=rentTable.rows[s].cells[5].textContent;
+
          var recbtn=document.createElement("a");
          recbtn.setAttribute("class","recbtn");
          recbtn.innerHTML="十校互借";
@@ -3251,7 +3135,6 @@ if(location.href.indexOf('http://210.38.102.131:86/opac/item.php?marc_no=')!=-1&
     function GZHTCM_interLending(){
 
         var infoTable=document.getElementsByClassName("booklist");
-        //alert(infoTable.textContent);
 
         var bookIndex=this.parentNode.parentNode.cells[0].textContent;
         var publisher =infoTable[1].getElementsByTagName("dd")[0].textContent;
@@ -3262,7 +3145,7 @@ if(location.href.indexOf('http://210.38.102.131:86/opac/item.php?marc_no=')!=-1&
         var title=document.getElementsByTagName("title")[0].textContent;
         var author=infoTable[0].getElementsByTagName("dd")[0].textContent;
         author = author.slice(author.indexOf('/')+1)
-        //alert(publisher+bookIndex+pubDate+title);
+
         GM_setValue("doubanTitle",title);
         GM_setValue("doubanIsbn",ISBN);
         GM_setValue("doubanPubdate",pubDate);
@@ -3275,9 +3158,8 @@ if(location.href.indexOf('http://210.38.102.131:86/opac/item.php?marc_no=')!=-1&
         GM_openInTab("http://www.gdtgw.cn:8080/#.html");
     }
 
-    //alert(rentTable.textContent);
     for (var s = 1; s < rentTable.rows.length; s++) {
-         //let bookIndex=rentTable.rows[s].cells[5].textContent;
+
          var recbtn=document.createElement("a");
          recbtn.setAttribute("class","recbtn");
          recbtn.innerHTML="十校互借";
@@ -3293,8 +3175,6 @@ if(location.href.indexOf('http://202.116.41.246:8080/opac/item.php?marc_no=')!=-
     function SCNU_interLending(){
 
         var infoTable=document.getElementsByClassName("booklist");
-        //alert(infoTable.textContent);
-
         var bookIndex=this.parentNode.parentNode.cells[0].textContent;
         var publisher =infoTable[1].getElementsByTagName("dd")[0].textContent;
         var pubDate = publisher.match(/\d+/);
@@ -3317,9 +3197,7 @@ if(location.href.indexOf('http://202.116.41.246:8080/opac/item.php?marc_no=')!=-
         GM_openInTab("http://www.gdtgw.cn:8080/#.html");
     }
 
-    //alert(rentTable.textContent);
     for (var s = 1; s < rentTable.rows.length; s++) {
-         //let bookIndex=rentTable.rows[s].cells[5].textContent;
          var recbtn=document.createElement("a");
          recbtn.setAttribute("class","recbtn");
          recbtn.innerHTML="十校互借";
@@ -3335,18 +3213,16 @@ if(location.href.indexOf('http://222.200.98.171:81/bookinfo.aspx?ctrlno=')!=-1&&
     function GDUT_interLending(){
 
         var infoTable=document.getElementById("ctl00_ContentPlaceHolder1_bookcardinfolbl");
-        //alert(infoTable.textContent);
 
         var bookIndex=this.parentNode.parentNode.cells[1].textContent;
         var publisher =infoTable.getElementsByTagName("a")[0].innerHTML;
         var pubDate = infoTable.textContent.match(/\d+\.?\d*/);
         var ISBN=infoTable.textContent.replace(/\n/g,"").match(/ISBN(\d|-)+/)[0];
-        //alert(ISBN);
+
         ISBN=ISBN.slice(4)
         var title=infoTable.textContent.slice(0,infoTable.textContent.indexOf("／")).replace(/　+/g,"");
         var author=infoTable.textContent.slice(infoTable.textContent.indexOf("／")+1,infoTable.textContent.indexOf("—")-1);
 
-        //alert(publisher+bookIndex+pubDate+title);
         GM_setValue("doubanTitle",title);
         GM_setValue("doubanIsbn",ISBN);
         GM_setValue("doubanPubdate",pubDate);
@@ -3359,9 +3235,8 @@ if(location.href.indexOf('http://222.200.98.171:81/bookinfo.aspx?ctrlno=')!=-1&&
         GM_openInTab("http://www.gdtgw.cn:8080/#.html");
     }
 
-    //alert(rentTable.textContent);
     for (var s = 1; s < rentTable.rows.length; s++) {
-         //let bookIndex=rentTable.rows[s].cells[5].textContent;
+
          var recbtn=document.createElement("a");
          recbtn.setAttribute("class","recbtn");
          recbtn.innerHTML="十校互借";
@@ -3383,12 +3258,11 @@ if(location.href.indexOf('http://121.33.246.167/opac/bookinfo.aspx?ctrlno=')!=-1
         var publisher =infoTable.getElementsByTagName("a")[0].innerHTML;
         var pubDate = infoTable.textContent.match(/\d+\.?\d*/);
         var ISBN=infoTable.textContent.replace(/\n/g,"").match(/ISBN(\d|-)+/)[0];
-        //alert(ISBN);
+
         ISBN=ISBN.slice(4)
         var title=infoTable.textContent.slice(0,infoTable.textContent.indexOf("／")).replace(/　+/g,"");
         var author=infoTable.textContent.slice(infoTable.textContent.indexOf("／")+1,infoTable.textContent.indexOf("—")-1);
 
-        //alert(publisher+bookIndex+pubDate+title);
         GM_setValue("doubanTitle",title);
         GM_setValue("doubanIsbn",ISBN);
         GM_setValue("doubanPubdate",pubDate);
@@ -3419,18 +3293,15 @@ if(location.href.indexOf('http://218.192.148.33:81/bookinfo.aspx?ctrlno=')!=-1&&
     function XHCOM_interLending(){
 
         var infoTable=document.getElementById("ctl00_ContentPlaceHolder1_bookcardinfolbl");
-        //alert(infoTable.textContent);
-
         var bookIndex=this.parentNode.parentNode.cells[1].textContent;
         var publisher =infoTable.getElementsByTagName("a")[0].innerHTML;
         var pubDate = infoTable.textContent.match(/\d+\.?\d*/);
         var ISBN=infoTable.textContent.replace(/\n/g,"").match(/ISBN(\d|-)+/)[0];
-        //alert(ISBN);
+
         ISBN=ISBN.slice(4)
         var title=infoTable.textContent.slice(0,infoTable.textContent.indexOf("／")).replace(/　+/g,"");
         var author=infoTable.textContent.slice(infoTable.textContent.indexOf("／")+1,infoTable.textContent.indexOf("—")-1);
 
-        //alert(publisher+bookIndex+pubDate+title);
         GM_setValue("doubanTitle",title);
         GM_setValue("doubanIsbn",ISBN);
         GM_setValue("doubanPubdate",pubDate);
@@ -3443,7 +3314,6 @@ if(location.href.indexOf('http://218.192.148.33:81/bookinfo.aspx?ctrlno=')!=-1&&
         GM_openInTab("http://www.gdtgw.cn:8080/#.html");
     }
 
-    //alert(rentTable.textContent);
     for (var s = 1; s < rentTable.rows.length; s++) {
          //let bookIndex=rentTable.rows[s].cells[5].textContent;
          var recbtn=document.createElement("a");
