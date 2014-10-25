@@ -20,7 +20,7 @@
 ![截图2](https://github.com/hanchyhill/userScript/blob/master/search_engine_jump_for_SYSU/search_engine_jump2.jpg)
 ![截图3](https://github.com/hanchyhill/userScript/blob/master/search_engine_jump_for_SYSU/search_engine_jump4.png)
 <h2>如何安装</h2>
-根据自己的浏览器先安装扩展，扩展安装完毕后点击本页面【[安装脚本](https://greasyfork.org/scripts/2765-search-engine-jump-for-academic/code/search%20engine%20jump%20for%20academic.user.js)】按钮即可完成安装
+根据自己的浏览器先安装扩展，扩展安装完毕后点击【[安装脚本](https://greasyfork.org/scripts/2765-search-engine-jump-for-academic/code/search%20engine%20jump%20for%20academic.user.js)】按钮即可完成安装
 <ul class="simple">
 <li><a href="http://www.firefox.com/" class="reference external">Firefox</a> + <a href="https://addons.mozilla.org/firefox/addon/greasemonkey/" class="reference external">Greasemonkey</a></li>
 <li><a href="http://www.opera.com/" class="reference external">Opera</a> + <a href="https://addons.opera.com/extensions/details/violent-monkey/" class="reference external">Violentmonkey</a></li>
