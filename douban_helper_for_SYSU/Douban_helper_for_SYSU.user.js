@@ -1,16 +1,18 @@
 // ==UserScript==  
-// @name       广州大学城图书馆豆瓣助手(中山大学版)
-// @description 为豆瓣图书增加广州大学城图书馆藏
-// @name:en        Douban library helper for SYSU
+// @name       广州十校图书馆豆瓣助手(中大版)
+// @description 为豆瓣图书增加广州大学城十校图书馆藏
+// @name:en        Douban library helper for Guangzhou Daxuecheng
 // @description:en add library collections in Guangzhou Daxuecheng on douban website
 // @author      Hanchy Hill
 // @namespace   https://minhill.com
 // @downloadURL https://greasyfork.org/scripts/2766
 // @include     http://book.douban.com/subject/*
+// @include     https://book.douban.com/subject/*
 // @include     http://202.116.64.108:8080/apsm/recommend/recommend_nobor.jsp*
 // @include     http://202.116.64.108:8080/apsm/recommend/recommend.jsp*
 // @include     http://202.38.232.10/opac/servlet/opac.go?cmdACT=recommend.form*
 // @include     http://read.douban.com/ebook/*
+// @include     https://read.douban.com/ebook/*
 // @include     http://www.gdtgw.cn:8080/*
 // @include     http://opac.gdufs.edu.cn:8991/F/*func=item-global*
 // @include     http://202.116.64.108:8991/F/*func=item-global*
@@ -22,7 +24,7 @@
 // @include     http://121.33.246.167/opac/bookinfo.aspx?ctrlno=*
 // @include     http://218.192.148.33:81/bookinfo.aspx?ctrlno=*
 // @include     http://opac.gdufs.edu.cn:8118/apsm/recommend/recommend_nobor.jsp*
-// @version     1.8.1
+// @version     1.9.5
 // @license     MIT
 // @grant GM_getValue
 // @grant GM_setValue
@@ -99,7 +101,7 @@ function StoreItem(school){
 
 ///////////////////////////豆瓣图书元信息///////////////////////////////////
 bookMeta=(function(){
-    if(location.href.indexOf('book')==-1){return null;}
+    if(location.href.indexOf('douban')==-1){return null;}//只在豆瓣页面执行
 
     if(location.href.indexOf('douban.com/subject')!=-1){
         //执行豆瓣图书Func.
@@ -153,7 +155,7 @@ bookMeta=(function(){
   }
   }
 
-  else if(location.href.indexOf('ebook')!=-1){
+  else if(location.href.indexOf('ebook')!=-1){//豆瓣电子书页面
     var allNodes, isbn=null;
     allNodes = document.evaluate('//a[@itemprop="isbn"]',document,null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,null);//获取isbn
     if(allNodes.snapshotItem(0)){
@@ -348,6 +350,7 @@ var schoolInfo={
     name:"广东外语外贸大学",
     abbrName:"广外",
     anySearchUrl:"http://opac.gdufs.edu.cn:8991/F/?find_code=WRD&request=%s&func=find-b",
+    anyForeianSearchUrl:"http://opac.gdufs.edu.cn:8991/F/?func=find-b&find_code=WRD&request=%s&local_base=GWD09",
     isbnSearchUrl:"http://opac.gdufs.edu.cn:8991/F/?func=find-b&find_code=ISB&request=%s&local_base=GWD01",
     isbnForeianSearchUrl:"http://opac.gdufs.edu.cn:8991/F/?func=find-b&find_code=ISB&request=%s&local_base=GWD09",
     recommendUrl:"http://opac.gdufs.edu.cn:8118/apsm/recommend/recommend_nobor.jsp",
@@ -435,10 +438,11 @@ var schoolInfo={
     //,EXP:"title-link-wrapper*?treelist-group"
 },
 
-"Google":{
-    name:"谷歌图书",
+"GoogleDoc":{
+    name:"谷歌聚合搜索",
     abbrName:"谷歌",
-    anySearchUrl:"https://wen.lu/search?q=%s&source=lnms&tbm=bks&sa=X&gws_rd=ssl",
+    anySearchUrl:"https://g.net.co/uds/GwebSearch?rsz=filtered_cse&hl=zh_CN&cx=006100883259189159113%3Atwgohm0sz8q&v=1.0&key=notsupplied&q=%s",
+    mirrorUrl:['https://g.net.co/', 'https://www.90r.org/', 'https://soso.red/', 'https://cao.si/'],
     isGBK:false
 },
 
@@ -2183,13 +2187,15 @@ filter: function (text, frameLocation) {
         var fullText;
         var abbrUrl=finalUrl.match(/(.*?)results/)[1];
         for(s=0;s<rowText.length;s++){
+            //alert(rowText[s]);
             bookBlock[s]=rowText[s].match(/href="(.*?)".*?title="(.*?)".*?caption.*?By:(.*?):(.*?)<p/);
             //link//题名//作者//出版社
-            fullTextLink=rowText[s].match(/title="eBook Full Text" href="(.*?)"/);
+            var fullTextLink = null;
+            var fullTextLink=rowText[s].match(/title="PDF Full Text" href="(.*?)"/);
             
             //link//书名//
             bookBlock[s].shift();
-            fullTextLink.shift();
+            if(fullTextLink) fullTextLink.shift();
             
             fullTextLink=abbrUrl+fullTextLink;
             if(fullTextLink) bookBlock[s][4]=fullTextLink;
@@ -2297,8 +2303,6 @@ libRecommend = {
 }
 ///////////////////图书馆荐购页面结束//////////////////
 
-////点击馆藏时触发
-
 
 ///////////////////框架//////////////////
 titleFrame=function(){
@@ -2307,30 +2311,59 @@ titleFrame=function(){
 
       document.getElementById("libTitle").style.display="none";
       document.getElementById("otherTitle").style.display="block";
+      document.getElementById("jaysonTitle").style.display="none";
       defineClass=this.getAttribute("data-ready");
       this.setAttribute("class","blue");
       document.getElementById("clickTitle").setAttribute("class","");
+      document.getElementById("clickJaysonTitle").setAttribute("class","");
       if(!defineClass){
         this.setAttribute("data-ready","already");
         otherTitle();
       }
     }
+
     function showOriginFrame(){
       document.getElementById("libTitle").style.display="block";
       document.getElementById("otherTitle").style.display="none";
+      document.getElementById("jaysonTitle").style.display="none";
       this.setAttribute("class","blue");
       document.getElementById("clickOtherTitle").setAttribute("class","");
-  }
+      document.getElementById("clickJaysonTitle").setAttribute("class","");
+    }
+
+    function showJaysonFrame(){
+
+      document.getElementById("libTitle").style.display="none";
+      document.getElementById("otherTitle").style.display="none";
+      document.getElementById("jaysonTitle").style.display="block";
+      defineClass=this.getAttribute("data-ready");
+      this.setAttribute("class","blue");
+      document.getElementById("clickTitle").setAttribute("class","");
+      document.getElementById("clickOtherTitle").setAttribute("class","");
+      if(!defineClass){
+        this.setAttribute("data-ready","already");
+        jaysonTitle();//改为谷歌
+      }
+    }
     var frame = document.createElement("div");
 
+    googleCustomUrl="https://www.google.com/cse?q="+bookMeta.title+"&newwindow=1&cx=006100883259189159113%3Atwgohm0sz8q";
     var otherTabName="超星";
     if(bookMeta.lan=="en")  otherTabName="EBSCO";
     frame.innerHTML='<ul class="tabmenu">'+
         '<li id="clickTitle" class="blue"><a>'+schoolInfo[prefs.school].abbrName+'</a></li>'+
         '<li id="clickOtherTitle"><a>'+otherTabName+'</a></li>'+
+        '<li id="clickJaysonTitle"><a>'+'谷歌聚合搜索'+'</a></li>'+
         '</ul>'+
         '<div id="libTitle" class="tab_content libBottom">'+'<h2>'+schoolInfo[prefs.school].abbrName+'图书馆全字段检索</h2>'+'</div>'+
-        '<div id="otherTitle" class="tab_content libBottom" style="display:none"><div id="mainOtherTitle"></div><div id="errorOtherTitle"></div></div>';
+        '<div id="otherTitle" class="tab_content libBottom" style="display:none"><div id="mainOtherTitle">'+
+        '</div><div id="errorOtherTitle"></div>'+
+        '</div>'+
+        '<div id="jaysonTitle" class="tab_content libBottom" style="display:none">'+'<h2>'+
+        '<a target="_blank" class="gotobtn" href="'+googleCustomUrl+'">前往谷歌聚合搜索</a><br>'+
+        '</h2>'+
+        '<div id="googleLoading"><li class="loadingSource"><img border="0" src="data:image/gif;base64,R0lGODlhCgAKAJEDAMzMzP9mZv8AAP///yH/C05FVFNDQVBFMi4wAwEAAAAh+QQFAAADACwAAAAACgAKAAACF5wncgaAGgJzJ647cWua4sOBFEd62VEAACH5BAUAAAMALAEAAAAIAAMAAAIKnBM2IoMDAFMQFAAh+QQFAAADACwAAAAABgAGAAACDJwHMBGofKIRItJYAAAh+QQFAAADACwAAAEAAwAIAAACChxgOBPBvpYQYxYAIfkEBQAAAwAsAAAEAAYABgAAAgoEhmPJHOGgEGwWACH5BAUAAAMALAEABwAIAAMAAAIKBIYjYhOhRHqpAAAh+QQFAAADACwEAAQABgAGAAACDJwncqi7EQYAA0p6CgAh+QQJAAADACwHAAEAAwAIAAACCpRmoxoxvQAYchQAOw=="> 努力加载中...</li></div>'+
+        '</div>';
 
     frame.setAttribute("class","tablist title_div");
 
@@ -2342,10 +2375,12 @@ titleFrame=function(){
     }
 
     aside.insertBefore(frame,aside.firstChild.nextSibling);
-        clickOther=document.getElementById("clickOtherTitle");
+    clickOther=document.getElementById("clickOtherTitle");
     clickOther.addEventListener("click",showOtherFrame,false);
     clickOther=document.getElementById("clickTitle");
     clickOther.addEventListener("click",showOriginFrame,false);
+    clickOther=document.getElementById("clickJaysonTitle");
+    clickOther.addEventListener("click",showJaysonFrame,false);
 }
 ISBNFrame=function(){
 
@@ -2432,7 +2467,7 @@ function otherTitle(){
         var frame=document.getElementById("mainOtherTitle");
         var loadingFrame=document.createElement("div");
         loadingFrame.setAttribute("id","otherTitleLoading");
-        loadingFrame.innerHTML= '<li id="loadingSource"><img border="0" src="data:image/gif;base64,R0lGODlhCgAKAJEDAMzMzP9mZv8AAP///yH/C05FVFNDQVBFMi4wAwEAAAAh+QQFAAADACwAAAAACgAKAAACF5wncgaAGgJzJ647cWua4sOBFEd62VEAACH5BAUAAAMALAEAAAAIAAMAAAIKnBM2IoMDAFMQFAAh+QQFAAADACwAAAAABgAGAAACDJwHMBGofKIRItJYAAAh+QQFAAADACwAAAEAAwAIAAACChxgOBPBvpYQYxYAIfkEBQAAAwAsAAAEAAYABgAAAgoEhmPJHOGgEGwWACH5BAUAAAMALAEABwAIAAMAAAIKBIYjYhOhRHqpAAAh+QQFAAADACwEAAQABgAGAAACDJwncqi7EQYAA0p6CgAh+QQJAAADACwHAAEAAwAIAAACCpRmoxoxvQAYchQAOw=="> 努力加载中...</li>'
+        loadingFrame.innerHTML= '<li class="loadingSource"><img border="0" src="data:image/gif;base64,R0lGODlhCgAKAJEDAMzMzP9mZv8AAP///yH/C05FVFNDQVBFMi4wAwEAAAAh+QQFAAADACwAAAAACgAKAAACF5wncgaAGgJzJ647cWua4sOBFEd62VEAACH5BAUAAAMALAEAAAAIAAMAAAIKnBM2IoMDAFMQFAAh+QQFAAADACwAAAAABgAGAAACDJwHMBGofKIRItJYAAAh+QQFAAADACwAAAEAAwAIAAACChxgOBPBvpYQYxYAIfkEBQAAAwAsAAAEAAYABgAAAgoEhmPJHOGgEGwWACH5BAUAAAMALAEABwAIAAMAAAIKBIYjYhOhRHqpAAAh+QQFAAADACwEAAQABgAGAAACDJwncqi7EQYAA0p6CgAh+QQJAAADACwHAAEAAwAIAAACCpRmoxoxvQAYchQAOw=="> 努力加载中...</li>'
 
         var frameLink = document.createElement("a");
             frameLink.setAttribute("target","_blank");
@@ -2473,6 +2508,85 @@ function otherTitle(){
     }
 
 }
+
+//////////////////谷歌检索，改自豆藤////////////////////////////
+var jaysonTitle = function(){
+    var keyw = bookMeta.title;
+    var cid = '006100883259189159113%3Atwgohm0sz8q'
+
+        var getSite = function(){
+                    return ['https://g.net.co/', 'https://www.90r.org/','https://g.wen.lu/','https://www.booo.so/','https://sepu.org/','https://www.gotosearch.info/','https://www.ggncr.com/','https://duliziyou.com/','http://0s.o53xo.m5xw6z3mmuxgizi.erenta.ru/','http://www.googlestable.cn/','http://g.openibm.com/'][Math.floor(Math.random() * 11 + 1)-1];
+                    // ******** Google 镜像 ********
+                    // 'https://repigu.com'*
+                    // 'https://g.net.co/'
+                    // 'https://www.90r.org/'
+                    // 'https://soso.red/'*
+                    // 'https://cao.si/'*
+                    // https://g.wen.lu/
+                    // https://www.booo.so/
+                    // https://sepu.org/
+                    // https://www.gotosearch.info/
+                    // https://www.ggncr.com/
+                    // https://duliziyou.com/
+                    // http://0s.o53xo.m5xw6z3mmuxgizi.erenta.ru/
+                    // http://www.googlestable.cn/
+                    // http://g.openibm.com/
+        };
+        var googleLoader = function(site){
+                                
+                    var path = site || 'http://www.google.com/';
+                    // var path = 'https://repigu.com/';
+                    
+                    GM_xmlhttpRequest({
+                        method: 'GET',
+                          headers: {
+            "User-Agent": "Mozilla/5.0",    // If not specified, navigator.userAgent will be used.
+            "Accept": "text/html;charset=utf-8"            // If not specified, browser defaults will be used.
+            },
+                        url: path + 'uds/GwebSearch?rsz=filtered_cse&hl=zh_CN&cx='+cid+'&v=1.0&key=notsupplied&q=allintitle%3A' + keyw,
+                        onload: function(resp){
+                             //alert(resp.status);
+                            if(resp.status < 200 || resp.status > 300){
+                                googleLoader(getSite()); // 切换镜像
+                                return;
+                            };
+                            if(resp.responseText.indexOf('Abuse')!==-1){
+                                //alert("Abuse");
+                                googleLoader(getSite()); // 切换镜像
+                                return;
+                            }
+                            var date = JSON.parse(resp.responseText);
+                            var loading =document.getElementById("googleLoading");
+                            if(loading) loading.parentNode.removeChild(loading);
+                            var itemNum = date.responseData.results.length; //搜索结果条目数
+                            if(itemNum == 0){
+                                document.getElementById("jaysonTitle").innerHTML+='<div>未找到相关内容</div>';
+                            };
+                            
+                            
+                            for(var i=0,j=itemNum; i<j; i++){
+                                var itemi = date.responseData.results[i]; //itemi 搜索结果条目i
+                                //alert(itemi);
+                                var webSite = !!itemi.perResultLabels && itemi.perResultLabels[0].anchor || ''; 
+                                //alert(webSite);
+                                webSite="【"+webSite+"】";
+                                //如果是图书，则将来源网站改为文档类型
+                                
+                                    var docType = itemi.title.match(/\.(txt|pdf|doc|ppt|chm|rar|exe|zip|epub|mobi|caj|jar)/i);
+                                    !!docType && (webSite = '【' + docType[1].toUpperCase() + '】');                  
+
+                                document.getElementById("jaysonTitle").innerHTML += '<li style="font-size: 12px;list-style-type:none"' +'><span class="pl">'+ webSite +'</span><a href="' + decodeURIComponent(itemi.url).replace('pan.baidu.com/wap/link', 'pan.baidu.com/share/link') + '" title="' + itemi.titleNoFormatting + '" target="_blank">' + itemi.title.replace(/_免费高速下载_新浪爱问共享资料|-epub电子书下载.*|–华为网盘.*|-在线下载.*|网盘下载\|115网盘.*|迅雷快传-|\| IMAX\.im 高清影院|资源下载,中文字幕下载,|电影,|下载,|已上映,|,下载《.*|\| 720p 高清电影\(imax.im\)|[\[【\(（][^\[\]]*\.(com|cn|net|org|cc)[\]】\)）]/gi, '') + '</a></li>';
+                            };
+                            
+                        },
+                        onerror: function(){
+                            googleLoader(getSite());
+                            return;
+                        }
+                    });
+                };
+        googleLoader(getSite());
+};
 //////////////ISBN搜索xml获取//////////////////
 mineISBN = function(school,frameLocation){
 
@@ -2587,14 +2701,9 @@ mineTitle = function(school){
         }
         else{
           GM_xmlhttpRequest({
-            method: "POST",
-            url: "http://yigewang.duapp.com/urlencode.php?m=ajax",
-            data: "charset=GB2312&q="+bookMeta.title+"&type=encode",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-              "Cookie": "BAEID=5F612DF6E06FBEA7ACF81CFD7974892C:FG=1"
-
-            },
+            method: 'GET',
+            url: 'http://www.baidu.com/s?ie=utf-8&wd=' + encodeURIComponent(bookMeta.title),
+            overrideMimeType: 'text/xml; charset=gb2312',
           onload: function(response) {
               //alert("text");
               if (response.status !== 200&&response.status !== 304){
@@ -2604,7 +2713,8 @@ mineTitle = function(school){
                 messageCatcher(msg,frameLocation);
                 return;
               }
-                fullUrl=  schoolInfo[school].anySearchUrl.replace(/%s/,response.responseText);
+              var keywordGB = String(response.responseText.match(/word=[^'"&]+['"&]/i)).replace(/word=|['"&]/ig,'');
+                fullUrl=  schoolInfo[school].anySearchUrl.replace(/%s/,keywordGB);
                 frameLink.setAttribute("href",fullUrl);
                 //alert(fullUrl);
                 GM_xmlhttpRequest({ //获取列表
@@ -2612,10 +2722,16 @@ mineTitle = function(school){
                 synchronous : false,//异步获取
                 url : fullUrl,
                 onload :function (reDetails){
-                  titleFilter[school].respond(reDetails,"title",fullUrl);
+                    titleFilter[school].respond(reDetails,"title",fullUrl);
+                }
+                });
+            },
+            onerror: function(){
+                return;
             }
-          });
-            }
+
+
+
         });
 
         }
@@ -3012,35 +3128,43 @@ if(location.href.indexOf('gdtgw.cn')!=-1){//十校互借页面
 
     function clickShow(mutations){    //点击按钮
         function fillForm(mutations){//填写表单
+            
+            
+            //document.getElementById("publishTime").value=GM_getValue("doubanPubdate","");
 
-            document.getElementById("idNo").value=prefs.studentID;
-            document.getElementById("campusId").value=prefs.school.toLowerCase();//无法设置，还需要一次监听，或者setTimeout
-            document.getElementsByName("reader.email")[0].value=prefs.eMail;
-            document.getElementsByName("reader.campus")[0].value=prefs.campus;
-            document.getElementsByName("reader.phone")[0].value=prefs.telephone;
-            document.getElementById("name").value=prefs.name;
-            document.getElementById("supplier").value=GM_getValue("rentSchool","");
-            document.getElementById("callNo").value=GM_getValue("bookIndex","");            
-            document.getElementById("title").value=GM_getValue("doubanTitle","");
-            document.getElementById("isbn").value=GM_getValue("doubanIsbn","");     
-            document.getElementById("author").value=GM_getValue("doubanAuthor","");  
-            document.getElementById("publisher").value=GM_getValue("doubanPublisher","");
-            document.getElementById("publishTime").value=GM_getValue("doubanPubdate","");
-                 
-            observerRight.disconnect();//去除监听
-            var target = document.getElementById("campusId");
+            /*observerRight.disconnect();//去除监听*/
+            //var target = document.getElementById("supplier");
+            var target = document.querySelector('#supplier');
             var observerSchool = new MutationObserver(function(mutations,obs){
                 document.getElementsByName("reader.campusId")[0].value=prefs.school.toLowerCase();
+                document.getElementById("supplier").value=GM_getValue("rentSchool","");
+                
                 //alert("test");
                 obs.disconnect;
+                observerRight.disconnect();
 
 
             });
             var config = { 'childList': true} 
             // 传入目标节点和观察选项
-            observerRight.observe(target, config);
+            observerSchool.observe(target, config);
 
+
+            ///
+            //document.getElementsByName("reader.campus")[0].value=prefs.campus;
             
+           
+            document.getElementById("phone").value=prefs.telephone;
+            document.getElementById("idNo").value=prefs.studentID;
+            document.getElementById("name").value=prefs.name;
+            document.getElementById("email").value=prefs.eMail;
+            document.getElementsByName("reader.campus")[0].value=prefs.campus;
+            document.getElementById("callNo").value=GM_getValue("bookIndex","");            
+            document.getElementById("title").value=GM_getValue("doubanTitle","");
+            document.getElementById("isbn").value=GM_getValue("doubanIsbn","");
+            document.getElementById("publishTime").value=GM_getValue("doubanPubdate","");
+            document.getElementById("author").value=GM_getValue("doubanAuthor","");  
+            document.getElementById("publisher").value=GM_getValue("doubanPublisher","");
         }
         ////////////////////////////////////////
 
@@ -3085,10 +3209,11 @@ if(location.href.indexOf('gdtgw.cn')!=-1){//十校互借页面
             document.getElementById("supplier").value=GM_getValue("rentSchool","");
             document.getElementById("callNo").value=GM_getValue("bookIndex","");            
             document.getElementById("title").value=GM_getValue("doubanTitle","");
-            document.getElementById("isbn").value=GM_getValue("doubanIsbn","");     
+            if(GM_getValue("doubanIsbn")) document.getElementById("isbn").value=GM_getValue("doubanIsbn","");
+            if(GM_getValue("doubanPubdate","")) document.getElementById("publishTime").value=GM_getValue("doubanPubdate","");
             document.getElementById("author").value=GM_getValue("doubanAuthor","");  
             document.getElementById("publisher").value=GM_getValue("doubanPublisher","");
-            document.getElementById("publishTime").value=GM_getValue("doubanPubdate","");
+            
             }
 
             function clickFirst(){
@@ -3152,10 +3277,10 @@ if(location.href.indexOf('202.116.64.108:8991')!=-1&&prefs.school!="SYSU"){//中
 
 if(location.href.indexOf('http://202.38.232.10/opac/servlet/opac.go')!=-1&&prefs.school!="SCUT"){//华理工
     var rentTable=document.getElementById("queryholding");
-    if(!rentTable){
-
-        return null;
-    }
+    if(rentTable){
+        //break;
+        //return null;
+    
 
     function SCUT_interLending(){
         var bookIndex=this.parentNode.parentNode.cells[2].textContent;
@@ -3177,6 +3302,7 @@ if(location.href.indexOf('http://202.38.232.10/opac/servlet/opac.go')!=-1&&prefs
         GM_setValue("doubanPubdate",pubDate);
         GM_setValue("doubanPublisher",publisher);
         GM_setValue("doubanAuthor",author);
+        //alert(ISBN);
         GM_setValue("doubanIsbn",ISBN);
         GM_openInTab("http://www.gdtgw.cn:8080/#.html");
     }
@@ -3189,7 +3315,8 @@ if(location.href.indexOf('http://202.38.232.10/opac/servlet/opac.go')!=-1&&prefs
          var btncell=rentTable.rows[s].cells[3];
          btncell.appendChild(recbtn);
          recbtn.addEventListener("click",SCUT_interLending,false);
-    };    
+    };   
+    } 
 }
 
 if(location.href.indexOf('lib.gzhu.edu.cn:8080/bookle/search2/detail')!=-1&&prefs.school!="GZHU"){//广州大学
@@ -3202,13 +3329,13 @@ if(location.href.indexOf('lib.gzhu.edu.cn:8080/bookle/search2/detail')!=-1&&pref
         var publisher = infoTable.rows[0].cells[1].textContent;
 
         var pubDate = publisher.match(/\d+/);
-
+        pubDate=pubDate.toString();
         publisher=publisher.slice(0,publisher.indexOf(pubDate)-1);
         var title=document.getElementsByTagName("title")[0].textContent.slice(13,-1);
         var author=infoTable.rows[1].cells[1].textContent.replace(/\n/g,"").replace(/ /g,"");
         //alert(publisher+bookIndex+pubDate+title);
         GM_setValue("doubanTitle",title);
-        GM_setValue("doubanPubdate",pubDate);
+        if(pubDate) GM_setValue("doubanPubdate",pubDate.toString());
         GM_setValue("doubanPublisher",publisher);
         GM_setValue("doubanAuthor",author);
         //GM_setValue("bookIndex",bookIndex);
@@ -3240,8 +3367,9 @@ if(location.href.indexOf('http://210.38.102.131:86/opac/item.php?marc_no=')!=-1&
         var bookIndex=this.parentNode.parentNode.cells[0].textContent;
         var publisher =infoTable[1].getElementsByTagName("dd")[0].textContent;
         var pubDate = publisher.match(/\d+/);
+        pubDate=pubDate.toString();
         var ISBN=infoTable[2].getElementsByTagName("dd")[0].textContent.match(/(\d|-)+/);
-
+        ISBN=ISBN[0];
         publisher=publisher.slice(0,publisher.indexOf(pubDate)-1);
         var title=document.getElementsByTagName("title")[0].textContent;
         var author=infoTable[0].getElementsByTagName("dd")[0].textContent;
@@ -3255,7 +3383,6 @@ if(location.href.indexOf('http://210.38.102.131:86/opac/item.php?marc_no=')!=-1&
         GM_setValue("bookIndex",bookIndex);
         GM_setValue("rentSchool","gzhtcm");
         GM_setValue("gotoRent",true);
-        GM_setValue("doubanTitle",title);
         GM_openInTab("http://www.gdtgw.cn:8080/#.html");
     }
 
@@ -3279,8 +3406,9 @@ if(location.href.indexOf('http://202.116.41.246:8080/opac/item.php?marc_no=')!=-
         var bookIndex=this.parentNode.parentNode.cells[0].textContent;
         var publisher =infoTable[1].getElementsByTagName("dd")[0].textContent;
         var pubDate = publisher.match(/\d+/);
+        pubDate=pubDate.toString()
         var ISBN=infoTable[2].getElementsByTagName("dd")[0].textContent.match(/(\d|-)+/);
-
+        ISBN=ISBN[0];
         publisher=publisher.slice(0,publisher.indexOf(pubDate)-1);
         var title=document.getElementsByTagName("title")[0].textContent;
         var author=infoTable[0].getElementsByTagName("dd")[0].textContent;
@@ -3288,13 +3416,13 @@ if(location.href.indexOf('http://202.116.41.246:8080/opac/item.php?marc_no=')!=-
         //alert(publisher+bookIndex+pubDate+title);
         GM_setValue("doubanTitle",title);
         GM_setValue("doubanIsbn",ISBN);
+        //alert(GM_getValue("doubanIsbn"));
         GM_setValue("doubanPubdate",pubDate);
         GM_setValue("doubanPublisher",publisher);
         GM_setValue("doubanAuthor",author);
         GM_setValue("bookIndex",bookIndex);
         GM_setValue("rentSchool","scnu");
         GM_setValue("gotoRent",true);
-        GM_setValue("doubanTitle",title);
         GM_openInTab("http://www.gdtgw.cn:8080/#.html");
     }
 
@@ -3317,7 +3445,7 @@ if(location.href.indexOf('http://222.200.98.171:81/bookinfo.aspx?ctrlno=')!=-1&&
 
         var bookIndex=this.parentNode.parentNode.cells[1].textContent;
         var publisher =infoTable.getElementsByTagName("a")[0].innerHTML;
-        var pubDate = infoTable.textContent.match(/\d+\.?\d*/);
+        if(pubDate = infoTable.textContent.match(/\d+\.?\d*/)) pubDate=pubDate.toString();
         var ISBN=infoTable.textContent.replace(/\n/g,"").match(/ISBN(\d|-)+/)[0];
 
         ISBN=ISBN.slice(4)
@@ -3357,7 +3485,7 @@ if(location.href.indexOf('http://121.33.246.167/opac/bookinfo.aspx?ctrlno=')!=-1
 
         var bookIndex=this.parentNode.parentNode.cells[1].textContent;
         var publisher =infoTable.getElementsByTagName("a")[0].innerHTML;
-        var pubDate = infoTable.textContent.match(/\d+\.?\d*/);
+        if(pubDate = infoTable.textContent.match(/\d+\.?\d*/)) pubDate=pubDate.toString();
         var ISBN=infoTable.textContent.replace(/\n/g,"").match(/ISBN(\d|-)+/)[0];
 
         ISBN=ISBN.slice(4)
@@ -3396,7 +3524,8 @@ if(location.href.indexOf('http://218.192.148.33:81/bookinfo.aspx?ctrlno=')!=-1&&
         var infoTable=document.getElementById("ctl00_ContentPlaceHolder1_bookcardinfolbl");
         var bookIndex=this.parentNode.parentNode.cells[1].textContent;
         var publisher =infoTable.getElementsByTagName("a")[0].innerHTML;
-        var pubDate = infoTable.textContent.match(/\d+\.?\d*/);
+        
+        if(pubDate = infoTable.textContent.match(/\d+\.?\d*/)) pubDate=pubDate.toString();
         var ISBN=infoTable.textContent.replace(/\n/g,"").match(/ISBN(\d|-)+/)[0];
 
         ISBN=ISBN.slice(4)
